@@ -1,23 +1,5 @@
-// Character:
-//  - Mesh
-//  - Texture
-//  - Lights
-//  - ...
-// Player (inherits Character):
-//  - InputListener
-// Enemy (inherits Character):
-//  - Artificial Intelligence (?)
-// var EnemyGroup[x][y]:
-//  - Enemy
-// Main:
-//  - Camera
-//  - Renderer
-//  - Scene
-//  - Lights
-//  - InputListener
-
 // Global scope
-var camera, scene, renderer, ambientLight;
+var camera, scene, renderer, ambientLight, inputHandler, player, enemies;
 
 /**
  * Creates a camera
@@ -25,7 +7,8 @@ var camera, scene, renderer, ambientLight;
 function createCamera() {
   'use strict';
 
-  camera = new THREE.OrthographicCamera(window.innerWidth/(-2), window.innerWidth/(2), window.innerHeight/(2), window.innerHeight/(-2), -1000, 1000 );
+  var factor = 10;
+  camera = new THREE.OrthographicCamera(window.innerWidth/(-2*factor), window.innerWidth/(2*factor), window.innerHeight/(2*factor), window.innerHeight/(-2*factor), -100, 100 );
 }
 
 /**
@@ -66,7 +49,7 @@ function onResize() {
   'use strict';
 
   // Recreate the camera and reset the renderer sizes
-  camera = new THREE.OrthographicCamera(window.innerWidth/(-2), window.innerWidth/(2), window.innerHeight/(2), window.innerHeight/(-2), -1000, 1000 );
+  createCamera();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -76,9 +59,25 @@ function onResize() {
 function render() {
   'use strict';
 
-  // Always request frame before rendering
-  requestAnimationFrame(render);
   renderer.render(scene, camera);
+}
+
+/**
+ * Animates the game
+ */
+function animate() {
+  "use strict";
+
+  // Wait for frame
+  requestAnimationFrame(animate);
+
+  // Animate every relevant object
+  var delta = animate.clock.getDelta();
+  player.animate(delta);
+  enemies.animate(delta);
+
+  // Render
+  render();
 }
 
 /**
@@ -93,11 +92,25 @@ function init() {
   createRenderer();
   createAmbientLight();
 
-  // Add player
-  scene.add(new Player());
+  // Create input listener
+  inputHandler = new InputHandler();
 
-  // Begin rendering
-  render();
+  // Add player
+  player = new Player(0, -25);
+  scene.add(player);
+
+  // Add enemies
+  enemies = new EnemyGroup();
+  for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 10; j++) {
+      enemies.object3D.add(new Enemy(-22.5 + j*5, 30 - i*5).object3D);
+    }
+  }
+  scene.add(enemies.object3D);
+
+  // Create clock and begin animating
+  animate.clock = new THREE.Clock();
+  animate();
 
   // Add event listeners
   window.addEventListener("resize", onResize);

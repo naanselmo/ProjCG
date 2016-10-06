@@ -22,7 +22,7 @@ THREE.Scene.prototype.add = function ( object ) {
     object.parent = this;
     object.dispatchEvent( { type: 'added' } );
     this.children.push( object );
-  } else if (object instanceof Character) {
+  } else if (object.object3D) {
     this.add(object.object3D);
   } else {
     console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
