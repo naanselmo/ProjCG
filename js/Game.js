@@ -96,14 +96,14 @@ function init() {
   inputHandler = new InputHandler();
 
   // Add player
-  player = new Player(0, -25);
+  player = new Player(0, -40);
   scene.add(player);
 
   // Add enemies
   enemies = new EnemyGroup();
   for (var i = 0; i < 5; i++) {
-    for (var j = 0; j < 10; j++) {
-      enemies.object3D.add(new Enemy(-22.5 + j*5, 30 - i*5).object3D);
+    for (var j = 0; j < 9; j++) {
+      enemies.object3D.add(new Enemy(-40 + j*9, 35 - i*9).object3D);
     }
   }
   scene.add(enemies.object3D);

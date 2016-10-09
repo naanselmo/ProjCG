@@ -4,19 +4,18 @@
 function EnemyGroup() {
   'use strict';
 
-  var speed = 10;
-  var direction = 1;
+  var speed = 15;
   this.object3D = new THREE.Object3D();
 
   EnemyGroup.prototype.animate = function(delta) {
     var boundingBox = new THREE.Box3().setFromObject(this.object3D);
 
-    if ((boundingBox.min.x + -1*speed*delta) > camera.left && (boundingBox.max.x + speed*delta) < camera.right) {
-      this.translateX(direction*speed*delta);
+    if ((boundingBox.min.x + speed*delta) > camera.left && (boundingBox.max.x + speed*delta) < camera.right) {
+      this.translateX(speed*delta);
     } else {
       // Out of bounds, reverse direction
-      direction *= -1;
-      this.translateX(direction*speed*delta);
+      speed *= -1;
+      this.translateX(speed*delta);
     }
   };
 }
