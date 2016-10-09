@@ -11,7 +11,7 @@ function Player(x, y, z) {
   var acceleration = 50;
   var decceleration = 25;
   var maxSpeed = 50;
-  var model = createSpaceship(0, 0, 0)
+  var model = createSpaceship(0, 0, 0);
   model.scale.set(1, 1, 1);
   this.object3D.add(model);
 
@@ -19,14 +19,14 @@ function Player(x, y, z) {
     var boundingBox = new THREE.Box3().setFromObject(this.object3D);
     var noInput = true;
 
-    if(inputHandler.isPressed(37)) { // Left arrow key
+    if(inputHandler.isHeldDown(37)) { // Left arrow key
       if (speed > 0) {
         speed -= decceleration*delta;
       }
       speed = Math.max(speed - acceleration*delta, -1*maxSpeed);
       noInput = false;
     }
-    if(inputHandler.isPressed(39)) { // Right arrow key
+    if(inputHandler.isHeldDown(39)) { // Right arrow key
       if (speed < 0) {
         speed += decceleration*delta;
       }
@@ -34,7 +34,7 @@ function Player(x, y, z) {
       noInput = false;
     }
     if (noInput) {
-      speed -= Math.sign(speed)*decceleration*delta;
+      speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
     }
 
     if (speed > 0) { // Check collisions on the right
@@ -43,7 +43,7 @@ function Player(x, y, z) {
       } else {
         // Out of bounds, move against the wall and bounce
         this.translateX(camera.right - boundingBox.max.x);
-        speed *= -0.25;
+        speed *= -0.5;
       }
     } else if (speed < 0) { // Check collisions on the left
       if ((boundingBox.min.x + speed*delta) > camera.left) {
@@ -51,7 +51,7 @@ function Player(x, y, z) {
       } else {
         // Out of bounds, move against the wall and bounce
         this.translateX(camera.left - boundingBox.min.x);
-        speed *= -0.25;
+        speed *= -0.5;
       }
     }
   };
@@ -110,7 +110,7 @@ function createSpaceshipBody(material, x, y, z) {
     body.add(flipY(rightSpoiler.clone()));
 
     // Create all exhaust pipes.
-    var rightTurbo = createExhaustPipe(material, 0.5, 0, -.5, 1, -0.5);
+    var rightTurbo = createExhaustPipe(material, 0.5, 0, -0.5, 1, -0.5);
     body.add(rightTurbo); // Right exhaust pipe.
     body.add(flipY(rightTurbo.clone())); // Left exhaust pipe.
     body.add(createExhaustPipe(material, 0, 0, -1, 1, -0.5)); // Middle exhaust pipe.

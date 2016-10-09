@@ -42,6 +42,24 @@ function createAmbientLight() {
 	scene.add( ambientLight );
 }
 
+function toggleWireframe(objectToTraverse) {
+  var stateFound = false;
+  var wireframeState;
+  if (objectToTraverse.object3D) {
+    toggleWireframe(objectToTraverse.object3D);
+  } else {
+    objectToTraverse.traverse(function(object3D) {
+      if (object3D.hasOwnProperty("material")) {
+        if (!stateFound) {
+          stateFound = true;
+          wireframeState = !object3D.material.wireframe;
+        }
+        object3D.material.wireframe = wireframeState;
+      }
+    });
+  }
+}
+
 /**
  * Adjusts the game after resize occurred
  */
@@ -75,6 +93,11 @@ function animate() {
   var delta = animate.clock.getDelta();
   player.animate(delta);
   enemies.animate(delta);
+
+  // If A was pressed, toggle wireframe
+  if(inputHandler.isPressed(65)) {
+    toggleWireframe(scene);
+  }
 
   // Render
   render();

@@ -4,18 +4,25 @@
 function InputHandler() {
   'use strict';
 
+  var keysDown = {};
   var keysPressed = {};
+
+  this.isHeldDown = function(key) {
+    return keysDown[key];
+  };
+
   this.isPressed = function(key) {
-    return keysPressed[key];
+    var isPressed = keysPressed[key];
+    keysPressed[key] = false;
+    return isPressed;
   };
 
   document.addEventListener('keydown', function(e) {
-    //console.log("Pressed " + e.keyCode);
-    keysPressed[e.keyCode] = true;
+    keysDown[e.keyCode] = true;
   }, false);
 
   document.addEventListener('keyup', function(e) {
-    //console.log("Let go " + e.keyCode);
-    keysPressed[e.keyCode] = false;
+    keysDown[e.keyCode] = false;
+    keysPressed[e.keyCode] = true;
   }, false);
 }
