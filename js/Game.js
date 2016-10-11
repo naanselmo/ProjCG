@@ -1,14 +1,20 @@
 // Global scope
-var camera, scene, renderer, ambientLight, inputHandler, player, enemies;
+var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight;
 
 /**
- * Creates a camera
+ * Creates an orthographic camera
  */
-function createCamera() {
+function createOrthographicCamera() {
   'use strict';
 
-  var factor = 10;
-  camera = new THREE.OrthographicCamera(window.innerWidth/(-2*factor), window.innerWidth/(2*factor), window.innerHeight/(2*factor), window.innerHeight/(-2*factor), -100, 100 );
+  var scaling = Math.min(renderer.getSize().width/gameWidth, renderer.getSize().height/gameHeight);
+  var scalingWidth = (renderer.getSize().width/gameWidth)/scaling;
+  var scalingHeight = (renderer.getSize().height/gameHeight)/scaling;
+
+  var cameraWidth = gameWidth*scalingWidth;
+  var cameraHeight = gameHeight*scalingHeight;
+  camera = new THREE.OrthographicCamera(cameraWidth/(-2), cameraWidth/(2), cameraHeight/(2), cameraHeight/(-2), -50, 50 );
+  console.log(cameraWidth, cameraHeight);
 }
 
 /**
@@ -67,7 +73,11 @@ function onResize() {
   'use strict';
 
   // Recreate the camera and reset the renderer sizes
-  createCamera();
+  if (camera.isOrthographicCamera) {
+    createOrthographicCamera();
+  } else {
+    createPerspectiveCamera();
+  }
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -109,11 +119,15 @@ function animate() {
 function init() {
   'use strict';
 
+  // Set the world height and width
+  gameWidth = 200;
+  gameHeight = 100;
+
   // Create components
   createScene();
-  createCamera();
   createRenderer();
   createAmbientLight();
+  createOrthographicCamera();
 
   // Create input listener
   inputHandler = new InputHandler();
@@ -124,8 +138,8 @@ function init() {
 
   // Add enemies
   enemies = new EnemyGroup();
-  for (var i = 0; i < 5; i++) {
-    for (var j = 0; j < 9; j++) {
+  for (var i = 0; i < 4; i++) {
+    for (var j = 0; j < 5; j++) {
       enemies.object3D.add(new Enemy(-40 + j*9, 35 - i*9).object3D);
     }
   }

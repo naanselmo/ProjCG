@@ -21,36 +21,34 @@ function Player(x, y, z) {
 
     if(inputHandler.isHeldDown(37)) { // Left arrow key
       if (speed > 0) {
-        speed -= decceleration*delta;
+        speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
       speed = Math.max(speed - acceleration*delta, -1*maxSpeed);
-      noInput = false;
+      noInput = !noInput;
     }
     if(inputHandler.isHeldDown(39)) { // Right arrow key
       if (speed < 0) {
-        speed += decceleration*delta;
+        speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
       speed = Math.min(speed + acceleration*delta, 1*maxSpeed);
-      noInput = false;
+      noInput = !noInput;
     }
     if (noInput) {
       speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
     }
 
     if (speed > 0) { // Check collisions on the right
-      if ((boundingBox.max.x + speed*delta) < camera.right) {
+      if ((boundingBox.max.x + speed*delta) < (gameWidth/2)) {
         this.translateX(speed*delta);
       } else {
-        // Out of bounds, move against the wall and bounce
-        this.translateX(camera.right - boundingBox.max.x);
+        // Out of bounds, bounce
         speed *= -0.5;
       }
     } else if (speed < 0) { // Check collisions on the left
-      if ((boundingBox.min.x + speed*delta) > camera.left) {
+      if ((boundingBox.min.x + speed*delta) > (-gameWidth/2)) {
         this.translateX(speed*delta);
       } else {
-        // Out of bounds, move against the wall and bounce
-        this.translateX(camera.left - boundingBox.min.x);
+        // Out of bounds, bounce
         speed *= -0.5;
       }
     }

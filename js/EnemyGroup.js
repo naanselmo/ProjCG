@@ -10,7 +10,7 @@ function EnemyGroup() {
   EnemyGroup.prototype.animate = function(delta) {
     var boundingBox = new THREE.Box3().setFromObject(this.object3D);
 
-    if ((boundingBox.min.x + speed*delta) > camera.left && (boundingBox.max.x + speed*delta) < camera.right) {
+    if ((boundingBox.min.x + speed*delta) > (-gameWidth/2) && (boundingBox.max.x + speed*delta) < (gameWidth/2)) {
       this.translateX(speed*delta);
     } else {
       // Out of bounds, reverse direction
