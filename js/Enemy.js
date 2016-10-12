@@ -15,6 +15,14 @@ function Enemy(x, y, z) {
   };
 }
 
+/**
+ * Returns the enemy object.
+ *
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @returns {THREE.Object3D} Enemy object
+ */
 function createEnemy(x, y, z){
     var materialDome = new THREE.MeshBasicMaterial({color: 0x333333, wireframe: false});
     var material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: false});
@@ -25,9 +33,18 @@ function createEnemy(x, y, z){
     // makes the dome and the base
     enemy.add(createDome(materialDome, 0, 0, 0));
     enemy.add(createBase(material,0,0,0));
+
     return enemy;
 }
-
+/**
+ * Returns the dome of the enemy.
+ *
+ * @param {THREE.Material} material
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @returns The dome object of the enemy
+ */
 function createDome(material, x, y, z){
     // Creates dome.
     var dome = new THREE.Object3D();
@@ -40,8 +57,43 @@ function createDome(material, x, y, z){
     return dome;
 }
 
+
+/**
+ * Returns a foot of the enemy spaceship.
+ *
+ * @param {THREE.Material} material
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @param {Number} par1     direction in the x-axis of the foot
+ * @param {Number} par2     direction in the y-axis of the foot
+ * @param {Number} par3     direction in the z-axis of the foot
+ * @returns The body object of the spaceship
+ */
+function createFoot(material,x,y,z,par1, par2, par3){
+    // Creates a foot with 3 cubes
+    var foot = new THREE.Object3D();
+    mesh = new THREE.Mesh(geometry,material);
+    mesh.position.set(x,y,z);
+    foot.add(mesh);
+    for (i = 0; i < 2; i++) {
+        mesh = new THREE.Mesh(geometry,material);
+        mesh.position.set(x+par1,y+par2,z+par3);
+        foot.add(mesh);
+    }
+    return foot;
+}
+
+/**
+ * Returns the base of the enemy.
+ *
+ * @param {THREE.Material} material
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @returns The base object of the enemy
+ */
 function createBase(material, x, y, z){
-    // Creates base
     var base = new THREE.Object3D();
 
     // creates 3 feet , each one with 3 "boxes"
@@ -49,40 +101,24 @@ function createBase(material, x, y, z){
     var mesh;
 
     //first foot
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x+3, y-2, z-2.5);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x+3.5, y-2.5, z-3);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x+4, y-3, z-3.5);
-    base.add(mesh);
-
+    base.add(createFoot(material,x+3,y-2,z-2.5,0.5,-0.5,-0.5));
     // second foot
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x-3, y-2, z-2.5);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x-3.5, y-2.5, z-3);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x-4, y-3, z-3.5);
-    base.add(mesh);
-
+    base.add(createFoot(material,x-3,y-2,z-2.5,-0.5,-0.5,-0.5));
     //third foot
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x, y+2, z-2.5);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x, y+2.5, z-3);
-    base.add(mesh);
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(x, y+3, z-3.5);
-    base.add(mesh);
+    base.add(createFoot(material,x,y+2,z-2.5,0,0.5,-0.5));
+
     return base;
 }
 
+/**
+ * Returns the body of the enemy.
+ *
+ * @param {THREE.Material} material
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @returns The body object of the enemy
+ */
 function createEnemyBody(material, x, y, z){
     // Creates enemy body.
     var body = new THREE.Object3D();

@@ -11,6 +11,8 @@ function Player(x, y, z) {
   var acceleration = 50;
   var decceleration = 25;
   var maxSpeed = 50;
+  var rotationSpeed = Math.PI/3;
+  var maxAngle = Math.PI/6;
   var model = createSpaceship(0, 0, 0);
   model.scale.set(1, 1, 1);
   this.object3D.add(model);
@@ -18,35 +20,52 @@ function Player(x, y, z) {
   Player.prototype.animate = function(delta) {
     var boundingBox = new THREE.Box3().setFromObject(this.object3D);
     var noInput = true;
+    var angle = this.getRotationY();
+    var rotation = 0;
 
     if(inputHandler.isHeldDown(37)) { // Left arrow key
       if (speed > 0) {
         speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
-      speed = Math.max(speed - acceleration*delta, -1*maxSpeed);
+      speed -= acceleration*delta;
+      rotation -= rotationSpeed*delta;
       noInput = !noInput;
     }
     if(inputHandler.isHeldDown(39)) { // Right arrow key
       if (speed < 0) {
         speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
-      speed = Math.min(speed + acceleration*delta, 1*maxSpeed);
+      speed += acceleration*delta;
+      rotation += rotationSpeed*delta;
       noInput = !noInput;
     }
     if (noInput) {
       speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
+      rotation -= Math.sign(angle)*Math.min(Math.abs(angle), rotationSpeed*delta);
+    }
+
+    // Rotation limit checks
+    if (rotation !== 0){
+      rotation = Math.sign(rotation)*Math.min(Math.abs(rotation), Math.abs(Math.sign(rotation)*maxAngle - angle));
+    }
+
+    // Speed limit checks
+    if (speed !== 0){
+      speed = Math.sign(speed)*Math.min(Math.abs(speed), maxSpeed);
     }
 
     if (speed > 0) { // Check collisions on the right
       if ((boundingBox.max.x + speed*delta) < (gameWidth/2)) {
-        this.translateX(speed*delta);
+        this.translateSceneX(speed*delta);
+        this.rotateY(rotation);
       } else {
         // Out of bounds, bounce
         speed *= -0.5;
       }
     } else if (speed < 0) { // Check collisions on the left
       if ((boundingBox.min.x + speed*delta) > (-gameWidth/2)) {
-        this.translateX(speed*delta);
+        this.translateSceneX(speed*delta);
+        this.rotateY(rotation);
       } else {
         // Out of bounds, bounce
         speed *= -0.5;
