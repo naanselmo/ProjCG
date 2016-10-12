@@ -14,7 +14,6 @@ function createOrthographicCamera() {
   var cameraWidth = gameWidth*scalingWidth;
   var cameraHeight = gameHeight*scalingHeight;
   camera = new THREE.OrthographicCamera(cameraWidth/(-2), cameraWidth/(2), cameraHeight/(2), cameraHeight/(-2), -50, 50 );
-  console.log(cameraWidth, cameraHeight);
 }
 
 /**

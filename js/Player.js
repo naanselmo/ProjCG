@@ -24,7 +24,7 @@ function Player(x, y, z) {
     var rotation = 0;
 
     if(inputHandler.isHeldDown(37)) { // Left arrow key
-      if (speed > 0) {
+      if (speed > 0) { // Increased acceleration when switching directions
         speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
       speed -= acceleration*delta;
@@ -32,7 +32,7 @@ function Player(x, y, z) {
       noInput = !noInput;
     }
     if(inputHandler.isHeldDown(39)) { // Right arrow key
-      if (speed < 0) {
+      if (speed < 0) { // Increased acceleration when switching directions
         speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
       }
       speed += acceleration*delta;

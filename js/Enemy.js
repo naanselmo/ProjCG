@@ -57,7 +57,6 @@ function createDome(material, x, y, z){
     return dome;
 }
 
-
 /**
  * Returns a foot of the enemy spaceship.
  *
@@ -96,15 +95,15 @@ function createFoot(material,x,y,z,par1, par2, par3){
 function createBase(material, x, y, z){
     var base = new THREE.Object3D();
 
-    // creates 3 feet , each one with 3 "boxes"
+    // Creates 3 feet , each one with 3 "boxes"
     var geometry = new THREE.BoxGeometry(0.5,0.5,0.5 );
     var mesh;
 
-    //first foot
+    // First foot
     base.add(createFoot(material,x+3,y-2,z-2.5,0.5,-0.5,-0.5));
-    // second foot
+    // Second foot
     base.add(createFoot(material,x-3,y-2,z-2.5,-0.5,-0.5,-0.5));
-    //third foot
+    // Third foot
     base.add(createFoot(material,x,y+2,z-2.5,0,0.5,-0.5));
 
     return base;
