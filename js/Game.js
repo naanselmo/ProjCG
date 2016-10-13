@@ -44,19 +44,17 @@ function createAmbientLight() {
   'use strict';
 
   ambientLight = new THREE.AmbientLight( Math.random() * 0x10 );
-	scene.add( ambientLight );
+	scene.add(ambientLight);
 }
 
 function toggleWireframe(objectToTraverse) {
-  var stateFound = false;
   var wireframeState;
   if (objectToTraverse.object3D) {
     toggleWireframe(objectToTraverse.object3D);
   } else {
     objectToTraverse.traverse(function(object3D) {
       if (object3D.hasOwnProperty("material")) {
-        if (!stateFound) {
-          stateFound = true;
+        if (typeof(wireframeState) === 'undefined') {
           wireframeState = !object3D.material.wireframe;
         }
         object3D.material.wireframe = wireframeState;

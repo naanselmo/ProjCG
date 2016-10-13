@@ -225,14 +225,14 @@ function createExhaustPipe(material, x, y, z, width, height) {
  *
  * @param {Number} width The witdth of the irregular edge in the base.
  * @param {Number} height The height of the pyramid.
- * @param {Number} deep The deepness of the pyramid.
+ * @param {Number} depth The depth of the pyramid.
  * @returns The custom pyramid geometry.
  */
-function PyramidGeometry(width, height, deep) {
+function PyramidGeometry(width, height, depth) {
     var geometry = new THREE.Geometry();
     geometry.vertices = [
         // base bottom one
-        new THREE.Vector3(0, 0, deep),
+        new THREE.Vector3(0, 0, depth),
         // base same plane ones
         new THREE.Vector3(-width / 2, 0, 0),
         new THREE.Vector3(width / 2, 0, 0),
