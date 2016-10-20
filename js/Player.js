@@ -31,6 +31,12 @@ function Player(x, y, z) {
       rotation -= rotationSpeed*delta;
       noInput = !noInput;
     }
+
+    if ( inputHandler.isPressed(66)){
+      // pedir à pool um missil numa determinada posiçao
+      // determinar posição da nave
+      console.log("Shots fired");
+    }
     if(inputHandler.isHeldDown(39)) { // Right arrow key
       if (speed < 0) { // Increased acceleration when switching directions
         speed -= Math.sign(speed)*Math.min(Math.abs(speed), decceleration*delta);
