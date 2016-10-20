@@ -7,13 +7,13 @@ var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWi
 function createOrthographicCamera() {
   'use strict';
 
-  var scaling = Math.min(renderer.getSize().width/gameWidth, renderer.getSize().height/gameHeight);
-  var scalingWidth = (renderer.getSize().width/gameWidth)/scaling;
-  var scalingHeight = (renderer.getSize().height/gameHeight)/scaling;
+  var scaling = Math.min(renderer.getSize().width / gameWidth, renderer.getSize().height / gameHeight);
+  var scalingWidth = (renderer.getSize().width / gameWidth) / scaling;
+  var scalingHeight = (renderer.getSize().height / gameHeight) / scaling;
 
-  var cameraWidth = gameWidth*scalingWidth;
-  var cameraHeight = gameHeight*scalingHeight;
-  camera = new THREE.OrthographicCamera(cameraWidth/(-2), cameraWidth/(2), cameraHeight/(2), cameraHeight/(-2), -50, 50 );
+  var cameraWidth = gameWidth * scalingWidth;
+  var cameraHeight = gameHeight * scalingHeight;
+  camera = new THREE.OrthographicCamera(cameraWidth / (-2), cameraWidth / (2), cameraHeight / (2), cameraHeight / (-2), -50, 50);
 }
 
 /**
@@ -43,8 +43,8 @@ function createRenderer() {
 function createAmbientLight() {
   'use strict';
 
-  ambientLight = new THREE.AmbientLight( Math.random() * 0x10 );
-	scene.add(ambientLight);
+  ambientLight = new THREE.AmbientLight(Math.random() * 0x10);
+  scene.add(ambientLight);
 }
 
 function toggleWireframe(objectToTraverse) {
@@ -52,9 +52,9 @@ function toggleWireframe(objectToTraverse) {
   if (objectToTraverse.object3D) {
     toggleWireframe(objectToTraverse.object3D);
   } else {
-    objectToTraverse.traverse(function(object3D) {
+    objectToTraverse.traverse(function (object3D) {
       if (object3D.hasOwnProperty("material")) {
-        if (typeof(wireframeState) === 'undefined') {
+        if (typeof (wireframeState) === 'undefined') {
           wireframeState = !object3D.material.wireframe;
         }
         object3D.material.wireframe = wireframeState;
@@ -99,10 +99,12 @@ function animate() {
   // Animate every relevant object
   var delta = animate.clock.getDelta();
   player.animate(delta);
-  enemies.animate(delta);
+  enemies.forEach(function (enemy) {
+    enemy.animate(delta);
+  });
 
   // If A was pressed, toggle wireframe
-  if(inputHandler.isPressed(65)) {
+  if (inputHandler.isPressed(65)) {
     toggleWireframe(scene);
   }
 
@@ -134,13 +136,14 @@ function init() {
   scene.add(player);
 
   // Add enemies
-  enemies = new EnemyGroup();
+  enemies = [];
   for (var i = 0; i < 4; i++) {
     for (var j = 0; j < 5; j++) {
-      enemies.object3D.add(new Enemy(-40 + j*9, 35 - i*9).object3D);
+      var enemy = new Enemy(-40 + j * 9, 35 - i * 9);
+      enemies.push(enemy);
+      scene.add(enemy);
     }
   }
-  scene.add(enemies.object3D);
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();

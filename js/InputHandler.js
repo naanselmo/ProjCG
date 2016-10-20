@@ -7,21 +7,21 @@ function InputHandler() {
   var keysDown = {};
   var keysPressed = {};
 
-  this.isHeldDown = function(key) {
+  this.isHeldDown = function (key) {
     return keysDown[key];
   };
 
-  this.isPressed = function(key) {
+  this.isPressed = function (key) {
     var isPressed = keysPressed[key];
     keysPressed[key] = false;
     return isPressed;
   };
 
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     keysDown[e.keyCode] = true;
   }, false);
 
-  document.addEventListener('keyup', function(e) {
+  document.addEventListener('keyup', function (e) {
     keysDown[e.keyCode] = false;
     keysPressed[e.keyCode] = true;
   }, false);
