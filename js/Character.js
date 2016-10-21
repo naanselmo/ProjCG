@@ -17,7 +17,9 @@ function Character(x, y, z) {
   this.maxRotation = 0;
 }
 
-Character.prototype.animate = function (delta) {};
+Character.prototype.animate = function (delta) {
+  this.move(delta);
+};
 
 Character.prototype.move = function (delta) {
   this.boundingBox.setFromObject(this.object3D);
@@ -25,7 +27,7 @@ Character.prototype.move = function (delta) {
   // Increase velocity and check velocity limit
   this.velocity.add(this.acceleration.multiplyScalar(delta));
   this.velocity.clampLength(0, this.maxVelocity);
-  this.toMove.copy(this.velocity);
+  this.toMove.copy(this.velocity).multiplyScalar(delta);
 
   // Rotate object and check toRotate limit
   this.toRotate.copy(this.rotationVelocity.multiplyScalar(delta));
@@ -39,17 +41,22 @@ Character.prototype.move = function (delta) {
     this.handleCollision();
   }
 
-  this.translateScene(this.toMove.multiplyScalar(delta));
+  this.translateScene(this.toMove);
   this.rotate(this.toRotate);
 };
 
-// TODO: Add out of bounds detection
 Character.prototype.isOutOfBounds = function () {
-  return false;
+  return (this.toMove.x > 0 && this.boundingBox.max.x + this.toMove.x > gameWidth / 2) ||
+    (this.toMove.y > 0 && this.boundingBox.max.y + this.toMove.y > gameHeight / 2) ||
+    (this.toMove.x < 0 && this.boundingBox.min.x + this.toMove.x < -gameWidth / 2) ||
+    (this.toMove.y < 0 && this.boundingBox.min.y + this.toMove.y < -gameHeight / 2);
 };
 
-// TODO: Add out of bounds handling
-Character.prototype.handleOutOfBounds = function () {};
+// FIXME: This is for enemy collision, not out of bounds!
+Character.prototype.handleOutOfBounds = function () {
+  this.toMove.multiplyScalar(-1);
+  this.velocity.multiplyScalar(-0.5);
+};
 
 // TODO: Add collision detection
 Character.prototype.isColliding = function () {

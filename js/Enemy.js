@@ -8,12 +8,16 @@ function Enemy(x, y, z) {
   'use strict';
 
   Character.call(this, x, y, z);
+  this.maxVelocity = 20;
   var model = createEnemy(0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
-
-  Enemy.prototype.animate = function (delta) {};
 }
+
+Enemy.prototype.handleOutOfBounds = function () {
+  this.toMove.multiplyScalar(-1);
+  this.velocity.multiplyScalar(-1);
+};
 
 /**
  * Returns the enemy object.

@@ -140,6 +140,7 @@ function init() {
   for (var i = 0; i < 4; i++) {
     for (var j = 0; j < 5; j++) {
       var enemy = new Enemy(-40 + j * 9, 35 - i * 9);
+      enemy.velocity.set(Math.random(), Math.random()).normalize().multiplyScalar(enemy.maxVelocity);
       enemies.push(enemy);
       scene.add(enemy);
     }
