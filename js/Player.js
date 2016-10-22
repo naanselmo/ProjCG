@@ -14,6 +14,8 @@ function Player(x, y, z) {
   var model = createSpaceship(0, 0, 0);
   model.scale.set(1, 1, 1);
   this.object3D.add(model);
+  this.boundingBox.setFromObject(this.object3D);
+  this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
 
 Player.prototype.animate = function (delta) {
@@ -48,7 +50,13 @@ Player.prototype.animate = function (delta) {
     console.log("Shots fired");
   }
 
-  this.move(delta);
+  Character.prototype.animate.call(this, delta);
+};
+
+Player.prototype.handleOutOfBounds = function (boundary) {
+  this.toMove.multiplyScalar(0);
+  this.velocity.multiplyScalar(-0.5);
+  this.toRotate.multiplyScalar(0);
 };
 
 /**

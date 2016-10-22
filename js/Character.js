@@ -7,23 +7,26 @@ function Character(x, y, z) {
   this.object3D = new THREE.Object3D();
   this.object3D.position.set(x || 0, y || 0, z || 0);
   this.boundingBox = new THREE.Box3();
+  this.boundingSphere = new THREE.Sphere();
 
-  this.toMove = new THREE.Vector2(0, 0);
-  this.velocity = new THREE.Vector2(0, 0);
-  this.acceleration = new THREE.Vector2(0, 0);
+  this.toMove = new THREE.Vector3(0, 0, 0);
+  this.velocity = new THREE.Vector3(0, 0, 0);
+  this.acceleration = new THREE.Vector3(0, 0, 0);
   this.maxVelocity = 0;
   this.toRotate = new THREE.Vector3(0, 0, 0);
   this.rotationVelocity = new THREE.Vector3(0, 0, 0);
   this.maxRotation = 0;
 }
 
-Character.prototype.animate = function (delta) {
-  this.move(delta);
+Character.prototype.destroy = function () {
+  scene.remove(this.object3D);
 };
 
-Character.prototype.move = function (delta) {
-  this.boundingBox.setFromObject(this.object3D);
+Character.prototype.animate = function (delta) {
+  this.updateVectors(delta);
+};
 
+Character.prototype.updateVectors = function (delta) {
   // Increase velocity and check velocity limit
   this.velocity.add(this.acceleration.multiplyScalar(delta));
   this.velocity.clampLength(0, this.maxVelocity);
@@ -33,38 +36,47 @@ Character.prototype.move = function (delta) {
   this.toRotate.copy(this.rotationVelocity.multiplyScalar(delta));
   this.toRotate.clampLength(0, this.maxRotation - Math.sign(this.getRotation().dot(this.rotationVelocity)) * this.getRotation().length());
 
-  if (this.isOutOfBounds()) {
-    this.handleOutOfBounds();
-  }
+  // Move the boundingBox and the boundingSphere so they're used for collision and boundary checks
+  this.boundingBox.translate(this.toMove);
+  this.boundingSphere.center = this.boundingBox.getCenter();
+};
 
-  if (this.isColliding()) {
-    this.handleCollision();
-  }
+Character.prototype.checkConditions = function () {
+  this.detectOutOfBounds();
+  this.detectCollisions();
+};
 
+Character.prototype.updatePositions = function () {
   this.translateScene(this.toMove);
   this.rotate(this.toRotate);
+  this.boundingBox.setFromObject(this.object3D);
+  this.boundingSphere.center = this.boundingBox.getCenter();
 };
 
-Character.prototype.isOutOfBounds = function () {
-  return (this.toMove.x > 0 && this.boundingBox.max.x + this.toMove.x > gameWidth / 2) ||
-    (this.toMove.y > 0 && this.boundingBox.max.y + this.toMove.y > gameHeight / 2) ||
-    (this.toMove.x < 0 && this.boundingBox.min.x + this.toMove.x < -gameWidth / 2) ||
-    (this.toMove.y < 0 && this.boundingBox.min.y + this.toMove.y < -gameHeight / 2);
+Character.prototype.detectOutOfBounds = function () {
+  if (this.toMove.x >= 0 && this.boundingBox.max.x > gameWidth / 2) {
+    this.handleOutOfBounds(1); // Right boundary hit
+  } else if (this.toMove.x <= 0 && this.boundingBox.min.x < -gameWidth / 2) {
+    this.handleOutOfBounds(3); // Left boundary hit
+  } else if (this.toMove.y >= 0 && this.boundingBox.max.y > gameHeight / 2) {
+    this.handleOutOfBounds(2); // Top boundary hit
+  } else if (this.toMove.y <= 0 && this.boundingBox.min.y < -gameHeight / 2) {
+    this.handleOutOfBounds(4); // Bottom boundary hit
+  }
 };
 
-// FIXME: This is for enemy collision, not out of bounds!
-Character.prototype.handleOutOfBounds = function () {
-  this.toMove.multiplyScalar(-1);
-  this.velocity.multiplyScalar(-0.5);
+Character.prototype.handleOutOfBounds = function (boundary) {};
+
+Character.prototype.detectCollisions = function () {
+  var collidableObjects = enemies;
+  for (var i = 0; i < collidableObjects.length; i++) {
+    if (collidableObjects[i] !== this && this.boundingSphere.intersectsSphere(collidableObjects[i].boundingSphere)) {
+      this.handleCollision(collidableObjects[i]);
+    }
+  }
 };
 
-// TODO: Add collision detection
-Character.prototype.isColliding = function () {
-  return false;
-};
-
-// TODO: Add collision handling
-Character.prototype.handleCollision = function () {};
+Character.prototype.handleCollision = function (collisionObject, mirror) {};
 
 Character.prototype.translate = function (vectorDistance) {
   this.translateX(vectorDistance.x);
@@ -108,6 +120,22 @@ Character.prototype.rotateY = function (angle) {
 
 Character.prototype.rotateZ = function (angle) {
   this.object3D.rotateZ(angle);
+};
+
+Character.prototype.getPosition = function () {
+  return new THREE.Vector3(this.getPositionX(), this.getPositionY(), this.getPositionZ());
+};
+
+Character.prototype.getPositionX = function () {
+  return this.object3D.position.x;
+};
+
+Character.prototype.getPositionY = function () {
+  return this.object3D.position.y;
+};
+
+Character.prototype.getPositionZ = function () {
+  return this.object3D.position.z;
 };
 
 Character.prototype.getRotation = function () {

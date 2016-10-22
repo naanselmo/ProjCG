@@ -12,11 +12,32 @@ function Enemy(x, y, z) {
   var model = createEnemy(0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
+  this.boundingBox.setFromObject(this.object3D);
+  this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
 
-Enemy.prototype.handleOutOfBounds = function () {
-  this.toMove.multiplyScalar(-1);
-  this.velocity.multiplyScalar(-1);
+Enemy.prototype.destroy = function () {
+  for (var i = enemies.length - 1; i >= 0; i--) {
+    if (enemies[i] === this) {
+      enemies.splice(i, 1);
+    }
+  }
+  Character.prototype.destroy.call(this);
+};
+
+Enemy.prototype.handleOutOfBounds = function (boundary) {
+  if (boundary == 1 || boundary == 3) {
+    this.toMove.setX(0);
+    this.velocity.setX(-1 * this.velocity.x);
+  } else if (boundary == 2 || boundary == 4) {
+    this.toMove.setY(0);
+    this.velocity.setY(-1 * this.velocity.y);
+  }
+};
+
+Enemy.prototype.handleCollision = function (collisionObject, mirror) {
+  this.toMove.multiplyScalar(0);
+  this.velocity.negate();
 };
 
 /**

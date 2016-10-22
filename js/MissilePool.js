@@ -5,8 +5,9 @@ function MissilePool(maxMissiles) {
 }
 
 MissilePool.prototype.requestMissile = function (x, y, z) {
+  var missile;
   if (this.deadMissiles.length > 0) {
-    var missile = this.deadMissiles.pop();
+    missile = this.deadMissiles.pop();
     // TODO: Implement a setVisible(true|false)
     missile.object3D.visible = true;
     // TODO: missile.setPosition(x, y, z);
@@ -15,7 +16,7 @@ MissilePool.prototype.requestMissile = function (x, y, z) {
   }
 
   if (this.missiles.length < this.maxMissiles) {
-    var missile = new Missile(x, y, z);
+    missile = new Missile(x, y, z);
     scene.add(missile);
     this.missiles.push(missile);
     return missile;

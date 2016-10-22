@@ -1,5 +1,5 @@
 // Global scope
-var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight;
+var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster;
 
 /**
  * Creates an orthographic camera
@@ -98,10 +98,20 @@ function animate() {
 
   // Animate every relevant object
   var delta = animate.clock.getDelta();
-  player.animate(delta);
-  enemies.forEach(function (enemy) {
-    enemy.animate(delta);
-  });
+  var i = 0;
+  var objectsToIterate = [player].concat(enemies);
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    objectsToIterate[i].animate(delta);
+  }
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    objectsToIterate[i].checkConditions();
+  }
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    objectsToIterate[i].updatePositions();
+  }
 
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
@@ -137,14 +147,17 @@ function init() {
 
   // Add enemies
   enemies = [];
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 5; i++) {
     for (var j = 0; j < 5; j++) {
-      var enemy = new Enemy(-40 + j * 9, 35 - i * 9);
-      enemy.velocity.set(Math.random(), Math.random()).normalize().multiplyScalar(enemy.maxVelocity);
+      var enemy = new Enemy(-24 + j * 12, 35 - i * 12);
+      enemy.velocity.set(Math.random(), Math.random(), 0).normalize().multiplyScalar(enemy.maxVelocity);
       enemies.push(enemy);
       scene.add(enemy);
     }
   }
+
+  // Create the raycaster
+  collisionRaycaster = new THREE.Raycaster();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();
