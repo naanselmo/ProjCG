@@ -9,6 +9,7 @@ function Enemy(x, y, z) {
 
   Character.call(this, x, y, z);
   this.maxVelocity = 20;
+
   var model = createEnemy(0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
@@ -35,7 +36,7 @@ Enemy.prototype.handleOutOfBounds = function (boundary) {
   }
 };
 
-Enemy.prototype.handleCollision = function (collisionObject, mirror) {
+Enemy.prototype.handleCollision = function (collisionObject) {
   this.toMove.multiplyScalar(0);
   this.velocity.negate();
 };

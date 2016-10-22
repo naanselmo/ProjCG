@@ -59,6 +59,12 @@ Player.prototype.handleOutOfBounds = function (boundary) {
   this.toRotate.multiplyScalar(0);
 };
 
+Player.prototype.handleCollision = function (collisionObject) {
+  this.toMove.multiplyScalar(0);
+  this.velocity.multiplyScalar(0);
+  console.log("That hurt :(");
+};
+
 /**
  * Returns the new spaceship object.
  *

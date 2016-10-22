@@ -38,7 +38,7 @@ Character.prototype.updateVectors = function (delta) {
 
   // Move the boundingBox and the boundingSphere so they're used for collision and boundary checks
   this.boundingBox.translate(this.toMove);
-  this.boundingSphere.center = this.boundingBox.getCenter();
+  this.boundingSphere.center.add(this.toMove);
 };
 
 Character.prototype.checkConditions = function () {
@@ -68,7 +68,7 @@ Character.prototype.detectOutOfBounds = function () {
 Character.prototype.handleOutOfBounds = function (boundary) {};
 
 Character.prototype.detectCollisions = function () {
-  var collidableObjects = enemies;
+  var collidableObjects = [player].concat(enemies);
   for (var i = 0; i < collidableObjects.length; i++) {
     if (collidableObjects[i] !== this && this.boundingSphere.intersectsSphere(collidableObjects[i].boundingSphere)) {
       this.handleCollision(collidableObjects[i]);
@@ -76,7 +76,7 @@ Character.prototype.detectCollisions = function () {
   }
 };
 
-Character.prototype.handleCollision = function (collisionObject, mirror) {};
+Character.prototype.handleCollision = function (collisionObject) {};
 
 Character.prototype.translate = function (vectorDistance) {
   this.translateX(vectorDistance.x);
