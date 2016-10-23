@@ -1,21 +1,5 @@
 // Global scope
-var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster, missilePool;
-
-
-/**
- * Creates an orthographic camera
- */
-function createOrthographicCamera() {
-  'use strict';
-
-  var scaling = Math.min(renderer.getSize().width / gameWidth, renderer.getSize().height / gameHeight);
-  var scalingWidth = (renderer.getSize().width / gameWidth) / scaling;
-  var scalingHeight = (renderer.getSize().height / gameHeight) / scaling;
-
-  var cameraWidth = gameWidth * scalingWidth;
-  var cameraHeight = gameHeight * scalingHeight;
-  camera = new THREE.OrthographicCamera(cameraWidth / (-2), cameraWidth / (2), cameraHeight / (2), cameraHeight / (-2), -50, 50);
-}
+var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster, missilePool;
 
 /**
  * Creates the scene
@@ -70,12 +54,8 @@ function toggleWireframe(objectToTraverse) {
 function onResize() {
   'use strict';
 
-  // Recreate the camera and reset the renderer sizes
-  if (camera.isOrthographicCamera) {
-    createOrthographicCamera();
-  } else {
-    createPerspectiveCamera();
-  }
+  // Resize the current camera.
+  cameraHandler.resize();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -85,7 +65,7 @@ function onResize() {
 function render() {
   'use strict';
 
-  renderer.render(scene, camera);
+  renderer.render(scene, cameraHandler.getCamera());
 }
 
 /**
@@ -102,7 +82,7 @@ function animate() {
   var i = 0;
   var objectsToIterate = [player].concat(enemies);
   objectsToIterate.concat(missilePool.missiles);
-  
+
   for (i = 0; i < objectsToIterate.length; i++) {
     if ( objectsToIterate[i].object3D.visible==true){
       objectsToIterate[i].animate(delta);
@@ -112,7 +92,7 @@ function animate() {
   for (i = 0; i < objectsToIterate.length; i++) {
     if ( objectsToIterate[i].object3D.visible==true){
       objectsToIterate[i].checkConditions();
-    } 
+    }
   }
 
   for (i = 0; i < objectsToIterate.length; i++) {
@@ -120,6 +100,9 @@ function animate() {
       objectsToIterate[i].updatePositions();
     }
   }
+
+  // Update all cameras.
+  cameraHandler.update(delta);
 
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
@@ -144,8 +127,6 @@ function init() {
   createScene();
   createRenderer();
   createAmbientLight();
-  createOrthographicCamera();
-
 
   // Create missilePool
   missilePool= new MissilePool();
@@ -167,6 +148,10 @@ function init() {
       scene.add(enemy);
     }
   }
+
+  // Create camera handler. Create the handler after player since some cameras
+  // depend on the player's position.
+  cameraHandler = new CameraHandler();
 
   // Create the raycaster
   collisionRaycaster = new THREE.Raycaster();
