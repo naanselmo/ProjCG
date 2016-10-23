@@ -80,9 +80,8 @@ function animate() {
   // Animate every relevant object
   var delta = animate.clock.getDelta();
   var i = 0;
-  var objectsToIterate = [player].concat(enemies);
-  objectsToIterate.concat(missilePool.missiles);
-
+  var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
+  
   for (i = 0; i < objectsToIterate.length; i++) {
     if ( objectsToIterate[i].object3D.visible==true){
       objectsToIterate[i].animate(delta);

@@ -24,7 +24,7 @@ function createMissile(x,y,z){
 	var missile = new THREE.Mesh( geometry, material );
   missile.rotateX (Math.PI) ;
 	return missile;
-
+};
 Missile.prototype.destroy = function () {
   // TODO: What happens when this object is destroyed
   Character.prototype.destroy.call(this); // DESTROYS OBJECT3D!
@@ -32,7 +32,6 @@ Missile.prototype.destroy = function () {
 
 Missile.prototype.animate = function (delta) {
   // TODO: Set acceleration in the Y direction (this.acceleration is a 3D vector)
-  consol.log("I'm here animating");
   this.acceleration.setY(10);
   Character.prototype.animate.call(this, delta);
 };
@@ -49,7 +48,7 @@ Missile.prototype.handleOutOfBounds = function (boundary) {
 
 Missile.prototype.detectCollisions = function () {
   // TODO: Collision detection using the raycaster
-  var collidableObjects = [player].concat(enemies);
+  var collidableObjects = enemies;
   for (var i = 0; i < collidableObjects.length; i++) {
     if (collidableObjects[i] !== this && this.boundingSphere.intersectsSphere(collidableObjects[i].boundingSphere)) {
       this.handleCollision(collidableObjects[i]);
@@ -63,4 +62,3 @@ Missile.prototype.handleCollision = function (collisionObject) {
   missilePool.kill(this);    // Destroys the shot itself
 
 };
-}

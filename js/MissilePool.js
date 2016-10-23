@@ -43,7 +43,7 @@ MissilePool.prototype.requestMissile = function (x, y, z) {
 
 MissilePool.prototype.kill = function (missile) {
   // TODO: Implement a setVisible(true|false)
-  this.object3D.visible = false;
+  missile.object3D.visible = false;
   // this.setVisible(false);
   this.deadMissiles.push(missile);
 };
