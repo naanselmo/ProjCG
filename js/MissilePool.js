@@ -1,8 +1,21 @@
 function MissilePool(maxMissiles) {
-  this.maxMissiles = maxMissiles;
+  this.maxMissiles = 10; // maxMissiles
   this.missiles = [];
   this.deadMissiles = [];
 }
+
+MissilePool.prototype.setVisible = function (state) {
+  this.object3D.visible = state;
+};
+
+
+MissilePool.prototype.requestMaxMissiles = function () {
+  return this.maxMissiles;
+};
+
+MissilePool.prototype.setPosition = function (x,y,z) {
+  missile.object3D.position.set(x,y,z);
+};
 
 MissilePool.prototype.requestMissile = function (x, y, z) {
   var missile;
@@ -10,8 +23,11 @@ MissilePool.prototype.requestMissile = function (x, y, z) {
     missile = this.deadMissiles.pop();
     // TODO: Implement a setVisible(true|false)
     missile.object3D.visible = true;
+    // this.setVisible(true);
+
     // TODO: missile.setPosition(x, y, z);
-    missile.object3D.position.set(x, y, z);
+    missile.object3D.position.set(x,y,z);
+    //missile.setPosition(x, y, z);
     return missile;
   }
 
@@ -27,6 +43,7 @@ MissilePool.prototype.requestMissile = function (x, y, z) {
 
 MissilePool.prototype.kill = function (missile) {
   // TODO: Implement a setVisible(true|false)
-  missile.object3D.visible = false;
+  this.object3D.visible = false;
+  // this.setVisible(false);
   this.deadMissiles.push(missile);
 };

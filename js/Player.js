@@ -44,9 +44,8 @@ Player.prototype.animate = function (delta) {
     this.rotationVelocity.setY(-1 * Math.sign(this.getRotationY()) * Math.min(Math.PI / 3, Math.abs(this.getRotationY()) / delta));
   }
 
-  if (inputHandler.isPressed(66)) {
-    // pedir à pool um missil numa determinada posiçao
-    // determinar posição da nave
+  if (inputHandler.isPressed(66)) { // B key
+    scene.add(missilePool.requestMissile(this.getPositionX(),this.getPositionY(), this.getPositionZ()));
     console.log("Shots fired");
   }
 

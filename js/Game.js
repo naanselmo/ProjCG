@@ -1,5 +1,6 @@
 // Global scope
-var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster;
+var camera, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster, missilePool;
+
 
 /**
  * Creates an orthographic camera
@@ -100,17 +101,24 @@ function animate() {
   var delta = animate.clock.getDelta();
   var i = 0;
   var objectsToIterate = [player].concat(enemies);
-
+  objectsToIterate.concat(missilePool.missiles);
+  
   for (i = 0; i < objectsToIterate.length; i++) {
-    objectsToIterate[i].animate(delta);
+    if ( objectsToIterate[i].object3D.visible==true){
+      objectsToIterate[i].animate(delta);
+    }
   }
 
   for (i = 0; i < objectsToIterate.length; i++) {
-    objectsToIterate[i].checkConditions();
+    if ( objectsToIterate[i].object3D.visible==true){
+      objectsToIterate[i].checkConditions();
+    } 
   }
 
   for (i = 0; i < objectsToIterate.length; i++) {
-    objectsToIterate[i].updatePositions();
+    if ( objectsToIterate[i].object3D.visible==true){
+      objectsToIterate[i].updatePositions();
+    }
   }
 
   // If A was pressed, toggle wireframe
@@ -137,6 +145,10 @@ function init() {
   createRenderer();
   createAmbientLight();
   createOrthographicCamera();
+
+
+  // Create missilePool
+  missilePool= new MissilePool();
 
   // Create input listener
   inputHandler = new InputHandler();

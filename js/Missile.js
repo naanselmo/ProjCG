@@ -11,15 +11,18 @@ function Missile(x, y, z) {
   this.maxVelocity = 10;
 
   var model = createMissile(0, 0, 0);
+  // TODO : put the shot smaller 
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
+
 function createMissile(x,y,z){
 	var geometry = new THREE.CylinderGeometry( 7, 1, 16, 8);
 	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 	var missile = new THREE.Mesh( geometry, material );
+  missile.rotateX (Math.PI) ;
 	return missile;
 
 Missile.prototype.destroy = function () {
@@ -27,8 +30,10 @@ Missile.prototype.destroy = function () {
   Character.prototype.destroy.call(this); // DESTROYS OBJECT3D!
 };
 
-Player.prototype.animate = function (delta) {
+Missile.prototype.animate = function (delta) {
   // TODO: Set acceleration in the Y direction (this.acceleration is a 3D vector)
+  consol.log("I'm here animating");
+  this.acceleration.setY(10);
   Character.prototype.animate.call(this, delta);
 };
 
@@ -38,6 +43,7 @@ Missile.prototype.handleOutOfBounds = function (boundary) {
     // Right or Left
   } else if (boundary == 2 || boundary == 4) {
     // Bottom or Top
+    missilePool.kill(this);
   }
 };
 
@@ -52,7 +58,9 @@ Missile.prototype.detectCollisions = function () {
 };
 
 Missile.prototype.handleCollision = function (collisionObject) {
-  // TODO: Handle collision
+  // TODO: Handle collision - what happens when the shot hits the enemy
   collisionObject.destroy(); // Destroys the object it hit
+  missilePool.kill(this);    // Destroys the shot itself
+
 };
 }
