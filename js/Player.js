@@ -47,8 +47,7 @@ Player.prototype.animate = function (delta) {
   }
 
   if (inputHandler.isPressed(66)) { // B key
-    scene.add(missilePool.requestMissile(this.getPositionX(), this.getPositionY(), this.getPositionZ()));
-    console.log("Shots fired");
+    scene.add(missilePool.requestMissile(this.getPositionX(), this.getPositionY() + 9, this.getPositionZ()));
   }
 
   Character.prototype.animate.call(this, delta);
