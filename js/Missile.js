@@ -19,8 +19,9 @@ function Missile(x, y, z) {
 }
 
 function createMissile(x,y,z){
-	var geometry = new THREE.CylinderGeometry( 7, 1, 16, 8);
-	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+//	var geometry = new THREE.CylinderGeometry( 7, 1, 16, 8);
+	var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 	var missile = new THREE.Mesh( geometry, material );
   missile.rotateX (Math.PI) ;
 	return missile;
