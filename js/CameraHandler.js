@@ -3,13 +3,16 @@
  * Will also change between them by pressing 1 for the first, 2 for the second
  * and so on.
  */
-function CameraHandler(){
+function CameraHandler() {
   'use strict';
+
   this.cameras = [];
+
   // Add all the cameras.
   this.cameras.push(new OrthographicCamera());
   this.cameras.push(new PerspectiveCamera());
   this.cameras.push(new FollowCamera());
+
   // Use the first camera by default.
   this.currentCamera = this.cameras[0];
 }
@@ -18,27 +21,29 @@ function CameraHandler(){
  * Update all of the cameras' information based on the delta time.
  * @param  {number} delta Time between frames.
  */
-CameraHandler.prototype.update = function(delta){
+CameraHandler.prototype.update = function (delta) {
   'use strict';
+
   // Check if there is any need to change camera.
   for (var i = 0; i < this.cameras.length; i++) {
-    if(inputHandler.isPressed(49+i)){
+    if (inputHandler.isPressed(49 + i)) {
       this.currentCamera = this.cameras[i];
       return;
     }
   }
 
   // Update all cameras, independently if they are being used or not!
-  this.cameras.forEach(function (camera){
+  this.cameras.forEach(function (camera) {
     camera.update(delta);
   });
-}
+};
 
 /**
  * Calls the currentCamera's resize function.
  */
 CameraHandler.prototype.resize = function () {
   'use strict';
+
   this.currentCamera.resize();
 };
 
@@ -48,6 +53,7 @@ CameraHandler.prototype.resize = function () {
  */
 CameraHandler.prototype.getCamera = function () {
   'use strict';
+
   return this.currentCamera.camera;
 };
 
@@ -59,7 +65,8 @@ CameraHandler.prototype.getCamera = function () {
  */
 function FollowCamera() {
   'use strict';
-  this.lerp = 3;
+
+  this.lerp = 4;
   this.camera = new THREE.PerspectiveCamera();
   this.resize();
 }
@@ -70,12 +77,13 @@ function FollowCamera() {
  */
 FollowCamera.prototype.resize = function () {
   'use strict';
+
   this.camera.fov = 70;
-  this.camera.aspect = window.innerWidth/window.innerHeight;
+  this.camera.aspect = window.innerWidth / window.innerHeight;
   this.camera.near = 0.1;
   this.camera.far = 1000;
 
-  this.camera.position.set(player.getPositionX(), player.getPositionY()-10, 5);
+  this.camera.position.set(player.getPositionX(), player.getPositionY() - 10, 5);
   this.camera.up.set(0, 0, 1);
   this.camera.lookAt(new THREE.Vector3(player.getPositionX(), 0, 0));
 
@@ -89,6 +97,7 @@ FollowCamera.prototype.resize = function () {
  */
 FollowCamera.prototype.update = function (delta) {
   'use strict';
+
   this.camera.position.x += (player.getPositionX() - this.camera.position.x) * this.lerp * delta;
 };
 
@@ -99,6 +108,7 @@ FollowCamera.prototype.update = function (delta) {
  */
 function PerspectiveCamera() {
   'use strict';
+
   this.camera = new THREE.PerspectiveCamera();
   this.resize();
 }
@@ -109,6 +119,7 @@ function PerspectiveCamera() {
  */
 PerspectiveCamera.prototype.resize = function () {
   'use strict';
+
   // Thanks Nuno for the piece of magical code.
   var scaling = Math.min(renderer.getSize().width / gameWidth, renderer.getSize().height / gameHeight);
   var scalingWidth = (renderer.getSize().width / gameWidth) / scaling;
@@ -123,25 +134,25 @@ PerspectiveCamera.prototype.resize = function () {
   // This will allow to show all the game by having the lower horizontal limit fill the viewport width.
   // This distance will make sure that no matter what fov you choose, it will make the whole horizontal limit to be inside the frustum,
   // and therefore the whole game.
-  var distance = (cameraHeight*0.5) / Math.tan(fov/2*(Math.PI/180));
+  var distance = (cameraHeight * 0.5) / Math.tan(fov / 2 * (Math.PI / 180));
 
   // Rotate the camera in relation to the lower horizontal game limit. See drawing for demonstration.
   // This rotation is in degrees, and will make sure that the lower horizontal limit will still be on screen after the rotation.
   var angle = 30;
-  var distanceZ = distance * Math.sin(angle*(Math.PI/180));
-  var distanceY = distance * Math.cos(angle*(Math.PI/180));
+  var distanceZ = distance * Math.sin(angle * (Math.PI / 180));
+  var distanceY = distance * Math.cos(angle * (Math.PI / 180));
 
   // Update the camera, with the calculated parameters.
   this.camera.fov = fov;
-  this.camera.aspect = cameraWidth/cameraHeight;
+  this.camera.aspect = cameraWidth / cameraHeight;
   // Near will be near the lower horizontal limit. Notice the -distanceZ, its just to make sure
   // that when rotating, the near plane doesn't cut the elements that are close to the lower horizontal limit.
-  this.camera.near = distance-distanceZ;
+  this.camera.near = distance - distanceZ;
   // The same happens with the far plane.
-  this.camera.far = distance+gameHeight+distanceZ;
+  this.camera.far = distance + gameHeight + distanceZ;
 
   // Set the position of the camera by summing the distance in relation to the lower horizontal limit.
-  this.camera.position.set(0, -(gameHeight/2)-distanceY, distanceZ);
+  this.camera.position.set(0, -(gameHeight / 2) - distanceY, distanceZ);
   // Set the camera roll to upwards.
   this.camera.up.set(0, 0, 1);
   // Look at the center of the game.
@@ -155,9 +166,7 @@ PerspectiveCamera.prototype.resize = function () {
  * The update function of the camera.
  * @param  {number} delta Time between frames.
  */
-PerspectiveCamera.prototype.update = function (delta) {
-  'use strict';
-};
+PerspectiveCamera.prototype.update = function (delta) {};
 
 /**
  * The Orthographic camera wrapper.
@@ -166,6 +175,7 @@ PerspectiveCamera.prototype.update = function (delta) {
  */
 function OrthographicCamera() {
   'use strict';
+
   this.camera = new THREE.OrthographicCamera();
   this.camera.near = -50;
   this.camera.far = 50;
@@ -178,6 +188,7 @@ function OrthographicCamera() {
  */
 OrthographicCamera.prototype.resize = function () {
   'use strict';
+
   var scaling = Math.min(renderer.getSize().width / gameWidth, renderer.getSize().height / gameHeight);
   var scalingWidth = (renderer.getSize().width / gameWidth) / scaling;
   var scalingHeight = (renderer.getSize().height / gameHeight) / scaling;
@@ -198,6 +209,4 @@ OrthographicCamera.prototype.resize = function () {
  * The update function of the camera.
  * @param  {number} delta Time between frames.
  */
-OrthographicCamera.prototype.update = function (delta) {
-  'use strict';
-};
+OrthographicCamera.prototype.update = function (delta) {};

@@ -3,6 +3,8 @@
  * @param {Object} object Object to add
  */
 THREE.Scene.prototype.add = function (object) {
+  'use strict';
+
   if (arguments.length > 1) {
     for (var i = 0; i < arguments.length; i++) {
       this.add(arguments[i]);
@@ -33,6 +35,8 @@ THREE.Scene.prototype.add = function (object) {
 };
 
 THREE.Box3.prototype.getBoundingSphere = function (optionalTarget) {
+  'use strict';
+
   var v1 = new THREE.Vector3();
   var result = optionalTarget || new THREE.Sphere();
   this.getCenter(result.center);

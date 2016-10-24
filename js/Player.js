@@ -19,6 +19,8 @@ function Player(x, y, z) {
 }
 
 Player.prototype.animate = function (delta) {
+  'use strict';
+
   var noInput = true;
 
   if (inputHandler.isHeldDown(37)) { // Left arrow key
@@ -45,7 +47,7 @@ Player.prototype.animate = function (delta) {
   }
 
   if (inputHandler.isPressed(66)) { // B key
-    scene.add(missilePool.requestMissile(this.getPositionX(),this.getPositionY(), this.getPositionZ()));
+    scene.add(missilePool.requestMissile(this.getPositionX(), this.getPositionY(), this.getPositionZ()));
     console.log("Shots fired");
   }
 
@@ -53,12 +55,16 @@ Player.prototype.animate = function (delta) {
 };
 
 Player.prototype.handleOutOfBounds = function (boundary) {
+  'use strict';
+
   this.toMove.multiplyScalar(0);
   this.velocity.multiplyScalar(-0.5);
   this.toRotate.multiplyScalar(0);
 };
 
 Player.prototype.handleCollision = function (collisionObject) {
+  'use strict';
+
   this.toMove.multiplyScalar(0);
   this.velocity.multiplyScalar(0);
   console.log("That hurt :(");
@@ -73,6 +79,8 @@ Player.prototype.handleCollision = function (collisionObject) {
  * @returns {THREE.Object3D} The spaceship object
  */
 function createSpaceship(x, y, z) {
+  'use strict';
+
   var material = new THREE.MeshBasicMaterial({
     color: 0x0ffff0,
     wireframe: false
@@ -95,6 +103,8 @@ function createSpaceship(x, y, z) {
  * @returns The body object of the spaceship
  */
 function createSpaceshipBody(material, x, y, z) {
+  'use strict';
+
   // Create main body.
   var body = new THREE.Object3D();
   var geometry = PyramidGeometry(4, 6, -2);
@@ -138,6 +148,8 @@ function createSpaceshipBody(material, x, y, z) {
  * @returns The wing object of the ship.
  */
 function createWing(material, x, y, z) {
+  'use strict';
+
   var wing = new THREE.Object3D();
   // Create wing main frame.
   var mainFrame = new THREE.Object3D();
@@ -175,11 +187,13 @@ function createWing(material, x, y, z) {
  * @returns The object of the spoiler of the spaceship.
  */
 function createSpoiler(material, x, y, z) {
+  'use strict';
+
   var spoiler = new THREE.Object3D();
 
   // Create the spoiler.
-  geometry = new THREE.BoxGeometry(3, 0.75, 0.2);
-  mesh = new THREE.Mesh(geometry, material);
+  var geometry = new THREE.BoxGeometry(3, 0.75, 0.2);
+  var mesh = new THREE.Mesh(geometry, material);
   // Rotate it
   mesh.rotation.y = -75 * Math.PI / 180;
   mesh.position.set(x, y + 0.375, z); // y+0.75/2 para y comecar do 0
@@ -200,13 +214,16 @@ function createSpoiler(material, x, y, z) {
  * @returns
  */
 function createExhaustPipe(material, x, y, z, width, height) {
+  'use strict';
+
   var pipe = new THREE.Object3D();
+  var geometry;
   if (height < 0) {
     geometry = new THREE.CylinderGeometry(width / 2, width / 2 - width / 4, -height);
   } else {
     geometry = new THREE.CylinderGeometry(width / 2 - width / 4, width / 2, height);
   }
-  mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(x, y + height / 2, z);
   pipe.add(mesh);
 
@@ -222,6 +239,8 @@ function createExhaustPipe(material, x, y, z, width, height) {
  * @returns The custom pyramid geometry.
  */
 function PyramidGeometry(width, height, depth) {
+  'use strict';
+
   var geometry = new THREE.Geometry();
   geometry.vertices = [
     // base bottom one
@@ -255,6 +274,8 @@ function PyramidGeometry(width, height, depth) {
  * @returns The mirrored object.
  */
 function flipY(object3d) {
+  'use strict';
+
   var flipMatrix = (new THREE.Matrix4()).identity();
   flipMatrix.elements[0] = -1;
   object3d.applyMatrix(flipMatrix);

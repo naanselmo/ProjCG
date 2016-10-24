@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, collisionRaycaster, missilePool;
+var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, missilePool;
 
 /**
  * Creates the scene
@@ -32,6 +32,10 @@ function createAmbientLight() {
   scene.add(ambientLight);
 }
 
+/**
+ * Toggles wireframe for the selected traversable object
+ * @param {Scene, Object3D, Character} objectToTraverse Object and its sub-objects to traverse and toggle wireframe
+ */
 function toggleWireframe(objectToTraverse) {
   var wireframeState;
   if (objectToTraverse.object3D) {
@@ -80,23 +84,25 @@ function animate() {
   // Animate every relevant object
   var delta = animate.clock.getDelta();
   var i = 0;
-  var objectsToIterate = [player].concat(enemies);
-  objectsToIterate.concat(missilePool.missiles);
+  var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
+
+  // All of these tasks are independent and could be parallelized
+  // If only Javascript supported decent threading...
 
   for (i = 0; i < objectsToIterate.length; i++) {
-    if ( objectsToIterate[i].object3D.visible==true){
+    if (objectsToIterate[i].isVisible()) {
       objectsToIterate[i].animate(delta);
     }
   }
 
   for (i = 0; i < objectsToIterate.length; i++) {
-    if ( objectsToIterate[i].object3D.visible==true){
+    if (objectsToIterate[i].isVisible()) {
       objectsToIterate[i].checkConditions();
     }
   }
 
   for (i = 0; i < objectsToIterate.length; i++) {
-    if ( objectsToIterate[i].object3D.visible==true){
+    if (objectsToIterate[i].isVisible()) {
       objectsToIterate[i].updatePositions();
     }
   }
@@ -129,7 +135,7 @@ function init() {
   createAmbientLight();
 
   // Create missilePool
-  missilePool= new MissilePool();
+  missilePool = new MissilePool();
 
   // Create input listener
   inputHandler = new InputHandler();
@@ -152,9 +158,6 @@ function init() {
   // Create camera handler. Create the handler after player since some cameras
   // depend on the player's position.
   cameraHandler = new CameraHandler();
-
-  // Create the raycaster
-  collisionRaycaster = new THREE.Raycaster();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();
