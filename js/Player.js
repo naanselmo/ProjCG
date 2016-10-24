@@ -10,6 +10,11 @@ function Player(x, y, z) {
   Character.call(this, x, y, z);
   this.maxVelocity = 50;
   this.maxRotation = Math.PI / 6;
+  this.missileClock = new THREE.Clock();
+  this.missileCooldown = 0.5;
+  this.missileCooldownLeft = this.missileCooldown;
+  this.missileMaxCharge = 5;
+  this.missileCharge = this.missileMaxCharge;
 
   var model = createSpaceship(0, 0, 0);
   model.scale.set(1, 1, 1);
@@ -47,7 +52,17 @@ Player.prototype.animate = function (delta) {
   }
 
   if (inputHandler.isPressed(66)) { // B key
-    scene.add(missilePool.requestMissile(this.getPositionX(), this.getPositionY() + 9, this.getPositionZ()));
+    // Check for restock now
+    this.missileCooldownLeft -= this.missileClock.getDelta();
+    while (this.missileCharge < (this.missileMaxCharge - 1) && this.missileCooldownLeft <= 0) {
+      this.missileCooldownLeft += this.missileCooldown;
+      this.missileCharge++;
+    }
+    this.missileCooldownLeft = Math.max(this.missileCooldownLeft, 0);
+    if (this.missileCharge > 0) {
+      this.missileCharge--;
+      missilePool.requestMissile(this.getPositionX(), this.getPositionY() + 6.5, this.getPositionZ());
+    }
   }
 
   Character.prototype.animate.call(this, delta);

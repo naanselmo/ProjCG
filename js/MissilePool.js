@@ -1,49 +1,46 @@
-function MissilePool(maxMissiles) {
-  this.maxMissiles = 10; // maxMissiles
+function MissilePool() {
+  'use strict';
+
   this.missiles = [];
   this.deadMissiles = [];
 }
 
-MissilePool.prototype.setVisible = function (state) {
-  this.object3D.visible = state;
-};
+MissilePool.prototype.setPosition = function (x, y, z) {
+  'use strict';
 
-
-MissilePool.prototype.requestMaxMissiles = function () {
-  return this.maxMissiles;
-};
-
-MissilePool.prototype.setPosition = function (x,y,z) {
-  missile.object3D.position.set(x,y,z);
+  missile.object3D.position.set(x, y, z);
 };
 
 MissilePool.prototype.requestMissile = function (x, y, z) {
-  var missile;
+  'use strict';
+
+  var missile = null;
   if (this.deadMissiles.length > 0) {
-    missile = this.deadMissiles.pop();
-    // TODO: Implement a setVisible(true|false)
-    missile.object3D.visible = true;
-    // this.setVisible(true);
-
-    // TODO: missile.setPosition(x, y, z);
-    missile.object3D.position.set(x,y,z);
-    //missile.setPosition(x, y, z);
-    return missile;
-  }
-
-  if (this.missiles.length < this.maxMissiles) {
+    missile = this.popDead();
+    missile.setVisible(true);
+    missile.setPosition(x, y, z);
+    missile.boundingBox.setFromObject(missile.object3D);
+  } else {
     missile = new Missile(x, y, z);
     scene.add(missile);
-    this.missiles.push(missile);
-    return missile;
+    this.push(missile);
   }
 
-  return null;
+  return missile;
 };
 
-MissilePool.prototype.kill = function (missile) {
-  // TODO: Implement a setVisible(true|false)
-  missile.object3D.visible = false;
-  // this.setVisible(false);
+MissilePool.prototype.push = function (missile) {
+  this.missiles.push(missile);
+};
+
+MissilePool.prototype.pop = function () {
+  return this.missiles.pop();
+};
+
+MissilePool.prototype.pushDead = function (missile) {
   this.deadMissiles.push(missile);
+};
+
+MissilePool.prototype.popDead = function () {
+  return this.deadMissiles.pop();
 };

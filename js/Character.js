@@ -100,6 +100,12 @@ Character.prototype.isVisible = function () {
   return this.object3D.visible;
 };
 
+Character.prototype.setVisible = function (visibility) {
+  'use strict';
+
+  this.object3D.visible = visibility;
+};
+
 Character.prototype.translate = function (vectorDistance) {
   'use strict';
 
@@ -170,10 +176,22 @@ Character.prototype.getPosition = function () {
   return new THREE.Vector3(this.getPositionX(), this.getPositionY(), this.getPositionZ());
 };
 
+Character.prototype.setPosition = function (x, y, z) {
+  'use strict';
+
+  this.object3D.position.set(x, y, z);
+};
+
 Character.prototype.getPositionX = function () {
   'use strict';
 
   return this.object3D.position.x;
+};
+
+Character.prototype.setPositionX = function (x) {
+  'use strict';
+
+  this.object3D.position.setX(x);
 };
 
 Character.prototype.getPositionY = function () {
@@ -182,10 +200,22 @@ Character.prototype.getPositionY = function () {
   return this.object3D.position.y;
 };
 
+Character.prototype.setPositionY = function (y) {
+  'use strict';
+
+  this.object3D.position.setY(y);
+};
+
 Character.prototype.getPositionZ = function () {
   'use strict';
 
   return this.object3D.position.z;
+};
+
+Character.prototype.setPositionZ = function (z) {
+  'use strict';
+
+  this.object3D.position.setZ(z);
 };
 
 Character.prototype.getRotation = function () {

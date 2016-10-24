@@ -58,24 +58,24 @@ Enemy.prototype.handleCollision = function (collisionObject) {
 function createEnemy(x, y, z) {
   'use strict';
 
-  var materialDome = new THREE.MeshBasicMaterial({
-    color: 0x333333,
-    wireframe: false
-  });
-  var material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: false
-  });
-
   // Make the main body, the other things will attach.
-  var enemy = createEnemyBody(material, 0, 0, 0);
+  var enemy = createEnemyBody(createEnemy.material, 0, 0, 0);
 
   // makes the dome and the base
-  enemy.add(createDome(materialDome, 0, 0, 0));
-  enemy.add(createBase(material, 0, 0, 0));
+  enemy.add(createDome(createEnemy.materialDome, 0, 0, 0));
+  enemy.add(createBase(createEnemy.material, 0, 0, 0));
 
   return enemy;
 }
+createEnemy.materialDome = new THREE.MeshBasicMaterial({
+  color: 0x333333,
+  wireframe: false
+});
+createEnemy.material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: false
+});
+
 /**
  * Returns the dome of the enemy.
  *
@@ -89,13 +89,10 @@ function createDome(material, x, y, z) {
   'use strict';
 
   // Creates dome.
-  var dome = new THREE.Object3D();
-
   var mesh = new THREE.Mesh(createDome.geometry, material);
   mesh.position.set(x, y, z);
-  dome.add(mesh);
 
-  return dome;
+  return mesh;
 }
 createDome.geometry = new THREE.SphereGeometry(4.5, 32, 32, 0, 3, 0, 3);
 
@@ -142,11 +139,8 @@ function createBase(material, x, y, z) {
 
   var base = new THREE.Object3D();
 
-  // First foot
   base.add(createFoot(material, x + 3, y - 2, z - 2.5, 0.5, -0.5, -0.5));
-  // Second foot
   base.add(createFoot(material, x - 3, y - 2, z - 2.5, -0.5, -0.5, -0.5));
-  // Third foot
   base.add(createFoot(material, x, y + 2, z - 2.5, 0, 0.5, -0.5));
 
   return base;
@@ -164,14 +158,10 @@ function createBase(material, x, y, z) {
 function createEnemyBody(material, x, y, z) {
   'use strict';
 
-  // Creates enemy body.
-  var body = new THREE.Object3D();
-
   // Creates body.
   var mesh = new THREE.Mesh(createEnemyBody.geometry, material);
   mesh.position.set(x, y, z);
-  body.add(mesh);
 
-  return body;
+  return mesh;
 }
 createEnemyBody.geometry = new THREE.TorusGeometry(6.5, 2, 8, 20, 6.3);
