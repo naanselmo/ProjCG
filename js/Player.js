@@ -51,14 +51,19 @@ Player.prototype.animate = function (delta) {
     this.rotationVelocity.setY(-1 * Math.sign(this.getRotationY()) * Math.min(Math.PI / 3, Math.abs(this.getRotationY()) / delta));
   }
 
-  if (inputHandler.isPressed(66)) { // B key
-    // Check for restock now
-    this.missileCooldownLeft -= this.missileClock.getDelta();
-    while (this.missileCharge < (this.missileMaxCharge - 1) && this.missileCooldownLeft <= 0) {
-      this.missileCooldownLeft += this.missileCooldown;
-      this.missileCharge++;
-    }
+  // Check for missile restock now
+  this.missileCooldownLeft -= this.missileClock.getDelta();
+  while (this.missileCharge < this.missileMaxCharge && this.missileCooldownLeft <= 0) {
+    this.missileCooldownLeft += this.missileCooldown;
+    this.missileCharge++;
+  }
+  if (this.missileCharge >= this.missileMaxCharge) {
+    this.missileCooldownLeft = this.missileCooldown;
+  } else {
     this.missileCooldownLeft = Math.max(this.missileCooldownLeft, 0);
+  }
+
+  if (inputHandler.isPressed(66)) { // B key
     if (this.missileCharge > 0) {
       this.missileCharge--;
       missilePool.requestMissile(this.getPositionX(), this.getPositionY() + 6.5, this.getPositionZ());
@@ -81,7 +86,6 @@ Player.prototype.handleCollision = function (collisionObject) {
 
   this.toMove.multiplyScalar(0);
   this.velocity.multiplyScalar(0);
-  console.log("That hurt :(");
 };
 
 /**
