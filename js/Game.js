@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, missilePool;
+var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, headsUpDisplay;
 
 /**
  * Creates the scene
@@ -17,6 +17,7 @@ function createRenderer() {
   'use strict';
 
   renderer = new THREE.WebGLRenderer();
+  renderer.autoClear = false;
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -60,6 +61,7 @@ function onResize() {
 
   // Resize the current camera.
   cameraHandler.resize();
+  headsUpDisplay.resize();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -70,6 +72,7 @@ function render() {
   'use strict';
 
   renderer.render(scene, cameraHandler.getCamera());
+  headsUpDisplay.render();
 }
 
 /**
@@ -110,6 +113,9 @@ function animate() {
   // Update all cameras.
   cameraHandler.update(delta);
 
+  // Update the HUD
+  headsUpDisplay.update(delta);
+
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
     toggleWireframe(scene);
@@ -126,13 +132,13 @@ function init() {
   'use strict';
 
   // Set the world height and width
-  gameWidth = 200;
-  gameHeight = 100;
+  gameWidth = 256;
+  gameHeight = 128;
 
   // Create components
   createScene();
   createRenderer();
-  createAmbientLight();
+  //createAmbientLight();
 
   // Create missilePool
   missilePool = new MissilePool();
@@ -158,6 +164,9 @@ function init() {
   // Create camera handler. Create the handler after player since some cameras
   // depend on the player's position.
   cameraHandler = new CameraHandler();
+
+  // Create the HUD
+  headsUpDisplay = new HeadsUpDisplay();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();
