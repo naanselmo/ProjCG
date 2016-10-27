@@ -28,6 +28,7 @@ CameraHandler.prototype.update = function (delta) {
   for (var i = 0; i < this.cameras.length; i++) {
     if (inputHandler.isPressed(49 + i)) {
       this.currentCamera = this.cameras[i];
+      this.currentCamera.resize();
       return;
     }
   }
