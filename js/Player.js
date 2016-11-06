@@ -99,12 +99,8 @@ Player.prototype.handleCollision = function (collisionObject) {
 function createSpaceship(x, y, z) {
   'use strict';
 
-  var material = new THREE.MeshBasicMaterial({
-    color: 0x0ffff0,
-    wireframe: false
-  });
-  var body = createSpaceshipBody(material, 0, 0, 0);
-  var rightWing = createWing(material, 0, 0.75, 0);
+  var body = createSpaceshipBody(0, 0, 0);
+  var rightWing = createWing(0, 0.75, 0);
   body.add(rightWing);
   body.add(flipY(rightWing.clone()));
   body.position.set(x, y, z);
@@ -114,69 +110,71 @@ function createSpaceship(x, y, z) {
 /**
  * Returns the body of the new spaceship.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
  * @returns The body object of the spaceship
  */
-function createSpaceshipBody(material, x, y, z) {
+function createSpaceshipBody(x, y, z) {
   'use strict';
 
   // Create main body.
   var body = new THREE.Object3D();
   var geometry = PyramidGeometry(4, 6, -2);
-  var mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
   mesh.position.set(x, y, z);
   body.add(mesh);
 
   // Create windshield
   var windshield = new THREE.Object3D();
   geometry = PyramidGeometry(2, -1, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
   windshield.add(mesh);
 
   geometry = PyramidGeometry(2, 2, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
   windshield.add(mesh);
   windshield.position.set(x, y + 1.5, z);
   body.add(windshield);
 
   // Create back spoilers.
-  var rightSpoiler = createSpoiler(material, x + 0.5, y, z);
+  var rightSpoiler = createSpoiler(x + 0.5, y, z);
   body.add(rightSpoiler);
   body.add(flipY(rightSpoiler.clone()));
 
   // Create all exhaust pipes.
-  var rightTurbo = createExhaustPipe(material, 0.5, 0, -0.5, 1, -0.5);
+  var rightTurbo = createExhaustPipe(0.5, 0, -0.5, 1, -0.5);
   body.add(rightTurbo); // Right exhaust pipe.
   body.add(flipY(rightTurbo.clone())); // Left exhaust pipe.
-  body.add(createExhaustPipe(material, 0, 0, -1, 1, -0.5)); // Middle exhaust pipe.
+  body.add(createExhaustPipe(0, 0, -1, 1, -0.5)); // Middle exhaust pipe.
 
   return body;
 }
+createSpaceshipBody.material = new THREE.MeshBasicMaterial({
+  color: 0x0ffff0,
+  wireframe: false
+});
 
 /**
  * Creates the wing object of the ship.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
  * @returns The wing object of the ship.
  */
-function createWing(material, x, y, z) {
+function createWing(x, y, z) {
   'use strict';
 
   var wing = new THREE.Object3D();
   // Create wing main frame.
   var mainFrame = new THREE.Object3D();
   var geometry = new THREE.BoxGeometry(3, 1, 0.5);
-  var mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, createWing.material);
   mainFrame.add(mesh);
 
   geometry = new THREE.BoxGeometry(3, 1, 0.5);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, createWing.material);
   mesh.rotation.z = -36 * Math.PI / 180;
   mesh.position.set(0, 1, 0);
 
@@ -187,31 +185,34 @@ function createWing(material, x, y, z) {
 
   // Create turbo.
   var turbo = new THREE.Object3D();
-  turbo.add(createExhaustPipe(material, 0, 0, 0, 2, 1));
-  turbo.add(createExhaustPipe(material, 0, 0, 0, 2, -1));
+  turbo.add(createExhaustPipe(0, 0, 0, 2, 1));
+  turbo.add(createExhaustPipe(0, 0, 0, 2, -1));
   turbo.position.set(x + 3.5, y + 0.75, z - 1);
   wing.add(turbo);
 
   return wing;
 }
+createWing.material = new THREE.MeshBasicMaterial({
+  color: 0x0ffff0,
+  wireframe: false
+});
 
 /**
  * Creates the right spoiler object of the spaceship.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
  * @returns The object of the spoiler of the spaceship.
  */
-function createSpoiler(material, x, y, z) {
+function createSpoiler(x, y, z) {
   'use strict';
 
   var spoiler = new THREE.Object3D();
 
   // Create the spoiler.
   var geometry = new THREE.BoxGeometry(3, 0.75, 0.2);
-  var mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, createSpoiler.material);
   // Rotate it
   mesh.rotation.y = -75 * Math.PI / 180;
   mesh.position.set(x, y + 0.375, z); // y+0.75/2 para y comecar do 0
@@ -219,11 +220,14 @@ function createSpoiler(material, x, y, z) {
 
   return spoiler;
 }
+createSpoiler.material = new THREE.MeshBasicMaterial({
+  color: 0x0ffff0,
+  wireframe: false
+});
 
 /**
  * Creates a exhaust pipe object.
  *
- * @param {THREE.Material} material
  * @param {Number} x The center x cordinate
  * @param {Number} y The y cordinate based on the base of the escape
  * @param {Number} z The center z cordinate
@@ -231,7 +235,7 @@ function createSpoiler(material, x, y, z) {
  * @param {Number} height The height of the escape. If height is negative it will flip the pipe.
  * @returns
  */
-function createExhaustPipe(material, x, y, z, width, height) {
+function createExhaustPipe(x, y, z, width, height) {
   'use strict';
 
   var pipe = new THREE.Object3D();
@@ -241,12 +245,16 @@ function createExhaustPipe(material, x, y, z, width, height) {
   } else {
     geometry = new THREE.CylinderGeometry(width / 2 - width / 4, width / 2, height);
   }
-  var mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, createExhaustPipe.material);
   mesh.position.set(x, y + height / 2, z);
   pipe.add(mesh);
 
   return pipe;
 }
+createExhaustPipe.material = new THREE.MeshBasicMaterial({
+  color: 0x0ffff0,
+  wireframe: false
+});
 
 /**
  * Makes a custom pyramid.
