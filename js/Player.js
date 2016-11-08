@@ -16,7 +16,7 @@ function Player(x, y, z) {
   this.missileMaxCharge = 5;
   this.missileCharge = this.missileMaxCharge;
 
-  var model = createSpaceship(0, 0, 0);
+  var model = createSpaceship(this.material, 0, 0, 0);
   model.scale.set(1, 1, 1);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
@@ -89,221 +89,170 @@ Player.prototype.handleCollision = function (collisionObject) {
 };
 
 /**
- * Returns the new spaceship object.
- *
- * @param {Number} x
- * @param {Number} y
- * @param {Number} z
- * @returns {THREE.Object3D} The spaceship object
+ * Creates a new spaceship object3d model.
+ * @param  {THREE.Material} material The material of the model.
+ * @param  {number} x The x coordinate of the original position of the model.
+ * @param  {number} y The y coordinate of the original position of the model.
+ * @param  {number} z The z coordinate of the original position of the model.
+ * @return {THREE.Object3D}  The object3d model.
  */
-function createSpaceship(x, y, z) {
+function createSpaceship(material, x, y, z) {
   'use strict';
-
-  var body = createSpaceshipBody(0, 0, 0);
-  var rightWing = createWing(0, 0.75, 0);
-  body.add(rightWing);
-  body.add(flipY(rightWing.clone()));
+  // Create the body
+  var body = modelBody(material);
+  // Create the windshield
+  var windshield = modelWindshield(material);
+  windshield.position.y = 0.5;
+  body.add(windshield);
+  // Create the wings
+  var winds = modelWinds(material);
+  winds.position.y = 0.50;
+  body.add(winds);
+  // Set the spaceship position.
   body.position.set(x, y, z);
   return body;
 }
-
-/**
- * Returns the body of the new spaceship.
- *
- * @param {Number} x
- * @param {Number} y
- * @param {Number} z
- * @returns The body object of the spaceship
- */
-function createSpaceshipBody(x, y, z) {
+ 
+function modelBody(material) {
   'use strict';
-
-  // Create main body.
   var body = new THREE.Object3D();
-  var geometry = PyramidGeometry(4, 6, -2);
-  var mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
-  mesh.position.set(x, y, z);
-  body.add(mesh);
-
-  // Create windshield
-  var windshield = new THREE.Object3D();
-  geometry = PyramidGeometry(2, -1, 1);
-  mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
-  windshield.add(mesh);
-
-  geometry = PyramidGeometry(2, 2, 1);
-  mesh = new THREE.Mesh(geometry, createSpaceshipBody.material);
-  windshield.add(mesh);
-  windshield.position.set(x, y + 1.5, z);
-  body.add(windshield);
-
-  // Create back spoilers.
-  var rightSpoiler = createSpoiler(x + 0.5, y, z);
-  body.add(rightSpoiler);
-  body.add(flipY(rightSpoiler.clone()));
-
-  // Create all exhaust pipes.
-  var rightTurbo = createExhaustPipe(0.5, 0, -0.5, 1, -0.5);
-  body.add(rightTurbo); // Right exhaust pipe.
-  body.add(flipY(rightTurbo.clone())); // Left exhaust pipe.
-  body.add(createExhaustPipe(0, 0, -1, 1, -0.5)); // Middle exhaust pipe.
-
-  return body;
-}
-createSpaceshipBody.material = new THREE.MeshBasicMaterial({
-  color: 0x0ffff0,
-  wireframe: false
-});
-
-/**
- * Creates the wing object of the ship.
- *
- * @param {Number} x
- * @param {Number} y
- * @param {Number} z
- * @returns The wing object of the ship.
- */
-function createWing(x, y, z) {
-  'use strict';
-
-  var wing = new THREE.Object3D();
-  // Create wing main frame.
-  var mainFrame = new THREE.Object3D();
-  var geometry = new THREE.BoxGeometry(3, 1, 0.5);
-  var mesh = new THREE.Mesh(geometry, createWing.material);
-  mainFrame.add(mesh);
-
-  geometry = new THREE.BoxGeometry(3, 1, 0.5);
-  mesh = new THREE.Mesh(geometry, createWing.material);
-  mesh.rotation.z = -36 * Math.PI / 180;
-  mesh.position.set(0, 1, 0);
-
-  mainFrame.position.set(x + 1.5, y + 0.5, z - 0.5);
-  mainFrame.rotation.y = 20 * Math.PI / 180;
-  mainFrame.add(mesh);
-  wing.add(mainFrame);
-
-  // Create turbo.
-  var turbo = new THREE.Object3D();
-  turbo.add(createExhaustPipe(0, 0, 0, 2, 1));
-  turbo.add(createExhaustPipe(0, 0, 0, 2, -1));
-  turbo.position.set(x + 3.5, y + 0.75, z - 1);
-  wing.add(turbo);
-
-  return wing;
-}
-createWing.material = new THREE.MeshBasicMaterial({
-  color: 0x0ffff0,
-  wireframe: false
-});
-
-/**
- * Creates the right spoiler object of the spaceship.
- *
- * @param {Number} x
- * @param {Number} y
- * @param {Number} z
- * @returns The object of the spoiler of the spaceship.
- */
-function createSpoiler(x, y, z) {
-  'use strict';
-
-  var spoiler = new THREE.Object3D();
-
-  // Create the spoiler.
-  var geometry = new THREE.BoxGeometry(3, 0.75, 0.2);
-  var mesh = new THREE.Mesh(geometry, createSpoiler.material);
-  // Rotate it
-  mesh.rotation.y = -75 * Math.PI / 180;
-  mesh.position.set(x, y + 0.375, z); // y+0.75/2 para y comecar do 0
-  spoiler.add(mesh);
-
-  return spoiler;
-}
-createSpoiler.material = new THREE.MeshBasicMaterial({
-  color: 0x0ffff0,
-  wireframe: false
-});
-
-/**
- * Creates a exhaust pipe object.
- *
- * @param {Number} x The center x cordinate
- * @param {Number} y The y cordinate based on the base of the escape
- * @param {Number} z The center z cordinate
- * @param {Number} width The width of the larger part of the escape
- * @param {Number} height The height of the escape. If height is negative it will flip the pipe.
- * @returns
- */
-function createExhaustPipe(x, y, z, width, height) {
-  'use strict';
-
-  var pipe = new THREE.Object3D();
-  var geometry;
-  if (height < 0) {
-    geometry = new THREE.CylinderGeometry(width / 2, width / 2 - width / 4, -height);
-  } else {
-    geometry = new THREE.CylinderGeometry(width / 2 - width / 4, width / 2, height);
-  }
-  var mesh = new THREE.Mesh(geometry, createExhaustPipe.material);
-  mesh.position.set(x, y + height / 2, z);
-  pipe.add(mesh);
-
-  return pipe;
-}
-createExhaustPipe.material = new THREE.MeshBasicMaterial({
-  color: 0x0ffff0,
-  wireframe: false
-});
-
-/**
- * Makes a custom pyramid.
- *
- * @param {Number} width The witdth of the irregular edge in the base.
- * @param {Number} height The height of the pyramid.
- * @param {Number} depth The depth of the pyramid.
- * @returns The custom pyramid geometry.
- */
-function PyramidGeometry(width, height, depth) {
-  'use strict';
-
+ 
+  // Create the custom mesh.
   var geometry = new THREE.Geometry();
+  // The vertexes
   geometry.vertices = [
-    // base bottom one
-    new THREE.Vector3(0, 0, depth),
-    // base same plane ones
-    new THREE.Vector3(-width / 2, 0, 0),
-    new THREE.Vector3(width / 2, 0, 0),
-    // tip
-    new THREE.Vector3(0, height, 0)
+    // top base vertexes
+    new THREE.Vector3(-2, 0, 0),
+    new THREE.Vector3(0, 6, 0),
+    new THREE.Vector3(2, 0, 0),
+    // bottom base ones
+    new THREE.Vector3(-1, 0, -1.5),
+    new THREE.Vector3(-.5, 3, -1.5),
+    new THREE.Vector3(.5, 3, -1.5),
+    new THREE.Vector3(1, 0, -1.5),
   ];
-
+  // The faces
   geometry.faces = [
-    // base face
+    // top base face
     new THREE.Face3(0, 2, 1),
-    // laterals faces
-    new THREE.Face3(0, 1, 3),
-    new THREE.Face3(0, 3, 2),
-    new THREE.Face3(1, 2, 3)
+    // turbos face
+    new THREE.Face3(3, 6, 2),
+    new THREE.Face3(3, 2, 0),
+    // bottom face
+    new THREE.Face3(3, 4, 6),
+    new THREE.Face3(6, 4, 5),
+    // bottom face to the tip
+    new THREE.Face3(5, 4, 1),
+    // left face
+    new THREE.Face3(4, 3, 0),
+    new THREE.Face3(1, 4, 0),
+    // right face
+    new THREE.Face3(2, 6, 5),
+    new THREE.Face3(2, 5, 1)
   ];
-
+  // Compute face normals
   geometry.computeFaceNormals();
   geometry.computeVertexNormals();
-
-  return geometry;
+ 
+  var mesh = new THREE.Mesh(geometry, material);
+  body.add(mesh);
+  return body;
 }
-
-/**
- * Mirrors a object based on the zy plane.
- *
- * @param {THREE.Object3D} object3d The object to be mirrored.
- * @returns The mirrored object.
- */
-function flipY(object3d) {
+ 
+function modelWindshield(material){
   'use strict';
-
-  var flipMatrix = (new THREE.Matrix4()).identity();
-  flipMatrix.elements[0] = -1;
-  object3d.applyMatrix(flipMatrix);
-  return object3d;
+  var windshield = new THREE.Object3D();
+ 
+  var geometry = new THREE.Geometry();
+  geometry.vertices = [
+    // The back of the windshield
+    new THREE.Vector3(0, 0, 0),
+    // The middle of the windshield
+    new THREE.Vector3(-1, 1, 0),
+    new THREE.Vector3(1, 1, 0),
+    new THREE.Vector3(-.5, 1, .75),
+    new THREE.Vector3(.5, 1, .75),
+    // Front of the windshield
+    new THREE.Vector3(-.5, 2, .75),
+    new THREE.Vector3(.5, 2, .75),
+    new THREE.Vector3(-.25, 3, 0),
+    new THREE.Vector3(.25, 3, 0),
+  ];
+ 
+  geometry.faces = [
+    // Back faces
+    new THREE.Face3(0, 3, 1),
+    new THREE.Face3(0, 4, 3),
+    new THREE.Face3(0, 2, 4),
+    // Front faces
+    new THREE.Face3(3, 4, 6),
+    new THREE.Face3(3, 6, 5),
+    new THREE.Face3(5, 6, 8),
+    new THREE.Face3(5, 8, 7),
+    // Laterals
+    new THREE.Face3(1, 3, 5),
+    new THREE.Face3(1, 5, 7),
+    new THREE.Face3(4, 2, 6),
+    new THREE.Face3(6, 2, 8)
+  ];
+  // Compute face normals
+  geometry.computeFaceNormals();
+ 
+  var mesh = new THREE.Mesh(geometry, material);
+  windshield.add(mesh);
+  return windshield;
+}
+ 
+function modelWinds(material){
+  'use strict';
+  var wind = new THREE.Object3D();
+ 
+  var geometry = new THREE.Geometry();
+  geometry.vertices = [
+    // middle top
+    new THREE.Vector3(0, 0, 0), //0
+    new THREE.Vector3(0, 3, 0), //1
+    // right wing vertices
+    new THREE.Vector3(4.5, 0, -1), //2
+    new THREE.Vector3(4, 1.5, -1.5), //3
+ 
+    // middle bottom
+    new THREE.Vector3(0, 0, -1), //4
+    new THREE.Vector3(0, 3, -1), //5
+ 
+    // left wing vertices
+    new THREE.Vector3(-4.5, 0, -1), //6
+    new THREE.Vector3(-4, 1.5, -1.5), //7
+  ];
+ 
+  geometry.faces = [
+    // Right wing Top face
+    new THREE.Face3(0, 2, 1),
+    new THREE.Face3(2, 3, 1),
+    // Right wing Bottom face
+    new THREE.Face3(2, 4, 5),
+    new THREE.Face3(3, 2, 5),
+    // Right wing Back face
+    new THREE.Face3(0, 4, 2),
+    // Right wing Front face
+    new THREE.Face3(3, 5, 1),
+ 
+    // Left wing Top face
+    new THREE.Face3(6, 0, 1),
+    new THREE.Face3(7, 6, 1),
+    // Left wing Bottom face
+    new THREE.Face3(5, 4, 6),
+    new THREE.Face3(6, 7, 5),
+    // Left wing Back face
+    new THREE.Face3(6, 4, 0),
+    // Left wing Front face
+    new THREE.Face3(1, 5, 7),
+  ];
+  // Compute face normals
+  geometry.computeFaceNormals();
+ 
+  var mesh = new THREE.Mesh(geometry, material);
+  wind.add(mesh);
+ 
+  return wind;
 }

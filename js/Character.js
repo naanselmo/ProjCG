@@ -10,6 +10,12 @@ function Character(x, y, z) {
   this.boundingSphere = new THREE.Sphere();
   this.boundingMovement = new THREE.Vector3(0, 0, 0);
 
+  this.basicMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff});
+  this.phongMaterial = new THREE.MeshPhongMaterial({color: 0x7777ff});
+  this.lambertMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
+  this.material = this.lambertMaterial; 
+  this.lastMaterial = this.material;
+
   this.toMove = new THREE.Vector3(0, 0, 0);
   this.velocity = new THREE.Vector3(0, 0, 0);
   this.acceleration = new THREE.Vector3(0, 0, 0);
@@ -104,6 +110,29 @@ Character.prototype.setVisible = function (visibility) {
   'use strict';
 
   this.object3D.visible = visibility;
+};
+
+Character.prototype.setMaterial = function (material) {
+  'use strict';
+
+  this.material = material; 
+  this.object3D.traverse(function (object3D){
+    if (object3D.hasOwnProperty("material")) {
+       object3D.material = material;
+    }
+  });
+};
+
+Character.prototype.getMaterial = function() {
+  return this.material;
+};
+
+Character.prototype.setLastMaterial = function(material) {
+  this.lastMaterial = material;
+};
+
+Character.prototype.getLastMaterial = function() {
+  return this.lastMaterial;
 };
 
 Character.prototype.translate = function (vectorDistance) {

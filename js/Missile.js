@@ -10,7 +10,7 @@ function Missile(x, y, z) {
   Character.call(this, x, y, z);
   this.maxVelocity = 50;
 
-  var model = createMissile(0, 0, 0);
+  var model = createMissile(this.material, 0, 0, 0);
 
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
@@ -47,14 +47,11 @@ Missile.prototype.handleCollision = function (collisionObject) {
   this.destroy(); // Destroys the shot itself
 };
 
-function createMissile(x, y, z) {
+function createMissile(material, x, y, z) {
   'use strict';
 
-  var missile = new THREE.Mesh(createMissile.geometry, createMissile.material);
+  var missile = new THREE.Mesh(createMissile.geometry, material);
   missile.rotateX(Math.PI);
   return missile;
 }
 createMissile.geometry = new THREE.SphereGeometry(1, 32, 32);
-createMissile.material = new THREE.MeshBasicMaterial({
-  color: 0xffff00
-});
