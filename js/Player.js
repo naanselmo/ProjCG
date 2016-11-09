@@ -16,18 +16,29 @@ function Player(x, y, z) {
   this.missileMaxCharge = 5;
   this.missileCharge = this.missileMaxCharge;
 
+  this.basicMaterial = Player.basicMaterial;
+  this.phongMaterial = Player.phongMaterial;
+  this.lambertMaterial = Player.lambertMaterial;
+  this.material = this.lambertMaterial;
+  this.lastMaterial = this.material;
+
   var model = createSpaceship(this.material, 0, 0, 0);
   model.scale.set(1, 1, 1);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
-
-  this.phongMaterial = new THREE.MeshPhongMaterial({color : 0x321337, emissive : 0x150d9b,specular : 0xffffff});
-  this.lambertMaterial = new THREE.MeshLambertMaterial({color : 0x321337, emissive : 0x150d9b});
-  this.material = this.lambertMaterial;
-  this.lastMaterial = this.material;
-  this.basicMaterial = new THREE.MeshBasicMaterial({color : 0xffffff});
 }
+Player.basicMaterial = new THREE.MeshBasicMaterial({
+  color: 0x22cc22
+});
+Player.phongMaterial = new THREE.MeshPhongMaterial({
+  color: 0x22cc22,
+  specular: 0x444444,
+  shading: THREE.SmoothShading
+});
+Player.lambertMaterial = new THREE.MeshLambertMaterial({
+  color: 0x22cc22
+});
 
 Player.prototype.animate = function (delta) {
   'use strict';
@@ -118,11 +129,11 @@ function createSpaceship(material, x, y, z) {
   body.position.set(x, y, z);
   return body;
 }
- 
+
 function modelBody(material) {
   'use strict';
   var body = new THREE.Object3D();
- 
+
   // Create the custom mesh.
   var geometry = new THREE.Geometry();
   // The vertexes
@@ -133,8 +144,8 @@ function modelBody(material) {
     new THREE.Vector3(2, 0, 0),
     // bottom base ones
     new THREE.Vector3(-1, 0, -1.5),
-    new THREE.Vector3(-.5, 3, -1.5),
-    new THREE.Vector3(.5, 3, -1.5),
+    new THREE.Vector3(-0.5, 3, -1.5),
+    new THREE.Vector3(0.5, 3, -1.5),
     new THREE.Vector3(1, 0, -1.5),
   ];
   // The faces
@@ -159,16 +170,16 @@ function modelBody(material) {
   // Compute face normals
   geometry.computeFaceNormals();
   geometry.computeVertexNormals();
- 
+
   var mesh = new THREE.Mesh(geometry, material);
   body.add(mesh);
   return body;
 }
- 
-function modelWindshield(material){
+
+function modelWindshield(material) {
   'use strict';
   var windshield = new THREE.Object3D();
- 
+
   var geometry = new THREE.Geometry();
   geometry.vertices = [
     // The back of the windshield
@@ -176,15 +187,15 @@ function modelWindshield(material){
     // The middle of the windshield
     new THREE.Vector3(-1, 1, 0),
     new THREE.Vector3(1, 1, 0),
-    new THREE.Vector3(-.5, 1, .75),
-    new THREE.Vector3(.5, 1, .75),
+    new THREE.Vector3(-0.5, 1, 0.75),
+    new THREE.Vector3(0.5, 1, 0.75),
     // Front of the windshield
-    new THREE.Vector3(-.5, 2, .75),
-    new THREE.Vector3(.5, 2, .75),
-    new THREE.Vector3(-.25, 3, 0),
-    new THREE.Vector3(.25, 3, 0),
+    new THREE.Vector3(-0.5, 2, 0.75),
+    new THREE.Vector3(0.5, 2, 0.75),
+    new THREE.Vector3(-0.25, 3, 0),
+    new THREE.Vector3(0.25, 3, 0),
   ];
- 
+
   geometry.faces = [
     // Back faces
     new THREE.Face3(0, 3, 1),
@@ -203,16 +214,16 @@ function modelWindshield(material){
   ];
   // Compute face normals
   geometry.computeFaceNormals();
- 
+
   var mesh = new THREE.Mesh(geometry, material);
   windshield.add(mesh);
   return windshield;
 }
- 
-function modelWinds(material){
+
+function modelWinds(material) {
   'use strict';
   var wind = new THREE.Object3D();
- 
+
   var geometry = new THREE.Geometry();
   geometry.vertices = [
     // middle top
@@ -221,16 +232,16 @@ function modelWinds(material){
     // right wing vertices
     new THREE.Vector3(4.5, 0, -1), //2
     new THREE.Vector3(4, 1.5, -1.5), //3
- 
+
     // middle bottom
     new THREE.Vector3(0, 0, -1), //4
     new THREE.Vector3(0, 3, -1), //5
- 
+
     // left wing vertices
     new THREE.Vector3(-4.5, 0, -1), //6
     new THREE.Vector3(-4, 1.5, -1.5), //7
   ];
- 
+
   geometry.faces = [
     // Right wing Top face
     new THREE.Face3(0, 2, 1),
@@ -242,7 +253,7 @@ function modelWinds(material){
     new THREE.Face3(0, 4, 2),
     // Right wing Front face
     new THREE.Face3(3, 5, 1),
- 
+
     // Left wing Top face
     new THREE.Face3(6, 0, 1),
     new THREE.Face3(7, 6, 1),
@@ -256,9 +267,9 @@ function modelWinds(material){
   ];
   // Compute face normals
   geometry.computeFaceNormals();
- 
+
   var mesh = new THREE.Mesh(geometry, material);
   wind.add(mesh);
- 
+
   return wind;
 }

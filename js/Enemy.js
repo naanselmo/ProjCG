@@ -6,15 +6,33 @@ Enemy.prototype.constructor = Enemy;
 
 function Enemy(x, y, z) {
   'use strict';
-  
+
   Character.call(this, x, y, z);
   this.maxVelocity = 20;
+
+  this.basicMaterial = Enemy.basicMaterial;
+  this.phongMaterial = Enemy.phongMaterial;
+  this.lambertMaterial = Enemy.lambertMaterial;
+  this.material = this.lambertMaterial;
+  this.lastMaterial = this.material;
+
   var model = createEnemy(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
+Enemy.basicMaterial = new THREE.MeshBasicMaterial({
+  color: 0xcc1212
+});
+Enemy.phongMaterial = new THREE.MeshPhongMaterial({
+  color: 0xcc1212,
+  specular: 0x444444,
+  shading: THREE.SmoothShading
+});
+Enemy.lambertMaterial = new THREE.MeshLambertMaterial({
+  color: 0xcc1212,
+});
 
 Enemy.prototype.destroy = function () {
   'use strict';
@@ -97,7 +115,7 @@ createDome.geometry = new THREE.SphereGeometry(4.5, 32, 32, 0, 3, 0, 3);
  * @param {Number} par3     direction in the z-axis of the foot
  * @returns The body object of the spaceship
  */
-function createFoot(material,x, y, z, par1, par2, par3) {
+function createFoot(material, x, y, z, par1, par2, par3) {
   'use strict';
 
   // Creates a foot with 3 cubes

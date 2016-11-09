@@ -10,14 +10,29 @@ function Missile(x, y, z) {
   Character.call(this, x, y, z);
   this.maxVelocity = 50;
 
-  var model = createMissile(this.material, 0, 0, 0);
+  this.basicMaterial = Missile.basicMaterial;
+  this.phongMaterial = Missile.phongMaterial;
+  this.lambertMaterial = Missile.lambertMaterial;
+  this.material = this.lambertMaterial;
+  this.lastMaterial = this.material;
 
+  var model = createMissile(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
-
+Missile.basicMaterial = new THREE.MeshBasicMaterial({
+  color: 0xc0c011
+});
+Missile.phongMaterial = new THREE.MeshPhongMaterial({
+  color: 0xc0c011,
+  specular: 0x444444,
+  shading: THREE.SmoothShading
+});
+Missile.lambertMaterial = new THREE.MeshLambertMaterial({
+  color: 0xc0c011
+});
 
 Missile.prototype.destroy = function () {
   'use strict';

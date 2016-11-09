@@ -111,24 +111,25 @@ function animate() {
   if (inputHandler.isPressed(71)) {
     for (i = 0; i < objectsToIterate.length; i++) {
       var character = objectsToIterate[i];
-      if (character.getMaterial() == character.lambertMaterial){
+      if (character.getMaterial() == character.lambertMaterial) {
         character.setMaterial(character.phongMaterial);
-      }else if (character.getMaterial() == character.phongMaterial){
+      } else if (character.getMaterial() == character.phongMaterial) {
         character.setMaterial(character.lambertMaterial);
-      } else {character.setMaterial(character.getLastMaterial());  }  
-
+      } else {
+        character.setMaterial(character.getLastMaterial());
+      }
     }
   }
 
   if (inputHandler.isPressed(76)) {
     for (i = 0; i < objectsToIterate.length; i++) {
       var character = objectsToIterate[i];
-       if (character.getMaterial() == character.basicMaterial){
+      if (character.getMaterial() == character.basicMaterial) {
         character.setMaterial(character.getLastMaterial());
-      }else{
+      } else {
         character.setLastMaterial(character.getMaterial());
         character.setMaterial(character.basicMaterial);
-      }    
+      }
     }
   }
   // Render

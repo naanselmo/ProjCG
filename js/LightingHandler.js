@@ -11,8 +11,11 @@ function LightingHandler() {
   this.createAmbientLight();
 
   // Create the point lights
-  for (var l = 0; l < 6; l++) {
-    this.createPointLight((Math.random() - 0.5) * gameWidth, (Math.random() - 0.5) * gameHeight, 10);
+  var variation = 20;
+  for (var x = 0; x < 3; x++) {
+    for (var y = 0; y < 2; y++) {
+      this.createPointLight(((gameWidth / 3) * x + gameWidth / 6) - gameWidth / 2 + (Math.random() - 0.5) * variation, ((gameHeight / 2) * y + gameHeight / 4) - gameHeight / 2 + (Math.random() - 0.5) * variation, 10);
+    }
   }
 
   // Create the spot light
@@ -97,7 +100,7 @@ function PointLight(x, y, z) {
   Light.call(this);
 
   var color = "#fffaf4";
-  var intensity = 0.25;
+  var intensity = 0.33;
   var distance = 50;
   var decay = 2;
 
@@ -116,7 +119,7 @@ function SpotLight(x, y, z, target) {
   var color = "#fffaf4";
   var intensity = 1;
   var distance = 0.0;
-  var angle = Math.PI / 3;
+  var angle = Math.PI / 2;
   var penumbra = 0.0;
   var decay = 2;
 
