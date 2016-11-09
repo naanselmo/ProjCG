@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, missilePool;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool;
 
 /**
  * Creates the scene
@@ -20,16 +20,6 @@ function createRenderer() {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-}
-
-/**
- * Creates an ambient light
- */
-function createAmbientLight() {
-  'use strict';
-
-  ambientLight = new THREE.AmbientLight(Math.random() * 0x10);
-  scene.add(ambientLight);
 }
 
 /**
@@ -110,6 +100,9 @@ function animate() {
   // Update all cameras.
   cameraHandler.update(delta);
 
+  // Update all the lights.
+  lightingHandler.update(delta);
+
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
     toggleWireframe(scene);
@@ -155,7 +148,6 @@ function init() {
   // Create components
   createScene();
   createRenderer();
-  createAmbientLight();
 
   // Create missilePool
   missilePool = new MissilePool();
@@ -172,7 +164,7 @@ function init() {
   for (var i = 0; i < 5; i++) {
     for (var j = 0; j < 5; j++) {
       var enemy = new Enemy(-24 + j * 12, 35 - i * 12);
-      enemy.velocity.set(Math.random(), Math.random(), 0).normalize().multiplyScalar(enemy.maxVelocity);
+      enemy.velocity.set(Math.random() - 0.5, Math.random() - 0.5, 0).normalize().multiplyScalar(enemy.maxVelocity);
       enemies.push(enemy);
       scene.add(enemy);
     }
@@ -181,6 +173,9 @@ function init() {
   // Create camera handler. Create the handler after player since some cameras
   // depend on the player's position.
   cameraHandler = new CameraHandler();
+
+  // Create the lighting handler.
+  lightingHandler = new LightingHandler();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();

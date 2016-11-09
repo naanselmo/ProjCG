@@ -1,0 +1,140 @@
+/**
+ * A class that will handle all the lighting.
+ * Will also listen to lighting-change commands and perform the changes
+ */
+function LightingHandler() {
+  'use strict';
+
+  this.lights = [];
+
+  // Create the ambient light
+  this.createAmbientLight();
+
+  // Create the point lights
+  for (var l = 0; l < 6; l++) {
+    this.createPointLight((Math.random() - 0.5) * gameWidth, (Math.random() - 0.5) * gameHeight, 10);
+  }
+
+  // Create the spot light
+  this.createSpotLight();
+}
+
+/**
+ * Update all of the lights' information based on the delta time.
+ * @param  {number} delta Time between frames.
+ */
+LightingHandler.prototype.update = function (delta) {
+  'use strict';
+
+  if (inputHandler.isPressed(77)) { // M key
+    this.toggleLights(AmbientLight);
+  }
+  if (inputHandler.isPressed(78)) { // N key
+    this.toggleLights(SpotLight);
+  }
+  if (inputHandler.isPressed(67)) { // C key
+    this.toggleLights(PointLight);
+  }
+};
+
+LightingHandler.prototype.addLight = function (light) {
+  this.lights.push(light);
+  scene.add(light.light);
+};
+
+LightingHandler.prototype.createAmbientLight = function () {
+  this.addLight(new AmbientLight());
+};
+
+LightingHandler.prototype.createPointLight = function (x, y, z) {
+  this.addLight(new PointLight(x || 0, y || 0, z || 10));
+};
+
+LightingHandler.prototype.createSpotLight = function (x, y, z, target) {
+  this.addLight(new SpotLight(x || 0, y || 0, z || 10, target && target.object3D ? target.object3D : new THREE.Object3D()));
+};
+
+LightingHandler.prototype.toggleLights = function (type) {
+  for (i = 0; i < this.lights.length; i++) {
+    if (this.lights[i] instanceof type) {
+      this.lights[i].toggle();
+    }
+  }
+};
+
+function Light() {
+  'use strict';
+
+  this.swappedLight = 0;
+}
+
+Light.prototype.toggle = function () {
+  var temp = this.swappedLight;
+  this.swappedLight = this.light.intensity;
+  this.light.intensity = temp;
+};
+
+AmbientLight.prototype = Object.create(Light.prototype);
+AmbientLight.prototype.constructor = AmbientLight;
+
+function AmbientLight() {
+  'use strict';
+
+  Light.call(this);
+
+  var color = "#ffffff";
+  var intensity = 0.01;
+
+  this.light = new THREE.AmbientLight(color, intensity);
+}
+
+PointLight.prototype = Object.create(Light.prototype);
+PointLight.prototype.constructor = PointLight;
+
+function PointLight(x, y, z) {
+  'use strict';
+
+  Light.call(this);
+
+  var color = "#fffaf4";
+  var intensity = 0.25;
+  var distance = 50;
+  var decay = 2;
+
+  this.light = new THREE.PointLight(color, intensity, distance, decay);
+  this.light.position.set(x, y, z);
+}
+
+SpotLight.prototype = Object.create(Light.prototype);
+SpotLight.prototype.constructor = SpotLight;
+
+function SpotLight(x, y, z, target) {
+  'use strict';
+
+  Light.call(this);
+
+  var color = "#fffaf4";
+  var intensity = 1;
+  var distance = 0.0;
+  var angle = Math.PI / 3;
+  var penumbra = 0.0;
+  var decay = 2;
+
+  this.light = new THREE.SpotLight(color, intensity, distance, angle, penumbra, decay);
+  this.light.position.set(x, y, z);
+  this.light.castShadow = false;
+  this.light.target = target;
+}
+
+/**
+ * Creates the lighting helper background
+ */
+function createLightingHelper() {
+  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 2, gameHeight * 2);
+  var material = new THREE.MeshLambertMaterial({
+    color: 0x101010
+  });
+  var background = new THREE.Mesh(geometry, material);
+  background.position.z = 0;
+  scene.add(background);
+}
