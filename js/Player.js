@@ -21,6 +21,12 @@ function Player(x, y, z) {
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
+
+  this.phongMaterial = new THREE.MeshPhongMaterial({color : 0x321337, emissive : 0x150d9b,specular : 0xffffff});
+  this.lambertMaterial = new THREE.MeshLambertMaterial({color : 0x321337, emissive : 0x150d9b});
+  this.material = this.lambertMaterial;
+  this.lastMaterial = this.material;
+  this.basicMaterial = new THREE.MeshBasicMaterial({color : 0xffffff});
 }
 
 Player.prototype.animate = function (delta) {

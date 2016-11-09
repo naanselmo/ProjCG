@@ -6,10 +6,9 @@ Enemy.prototype.constructor = Enemy;
 
 function Enemy(x, y, z) {
   'use strict';
-
+  
   Character.call(this, x, y, z);
   this.maxVelocity = 20;
-
   var model = createEnemy(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);

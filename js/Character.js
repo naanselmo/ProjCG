@@ -10,9 +10,9 @@ function Character(x, y, z) {
   this.boundingSphere = new THREE.Sphere();
   this.boundingMovement = new THREE.Vector3(0, 0, 0);
 
-  this.basicMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff});
-  this.phongMaterial = new THREE.MeshPhongMaterial({color: 0x7777ff});
-  this.lambertMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
+  this.basicMaterial = new THREE.MeshBasicMaterial({color : 0x33ff33});
+  this.phongMaterial = new THREE.MeshPhongMaterial({color : 0x33ff33, emissive : 0x150d9b,specular : 0xffffff});
+  this.lambertMaterial = new THREE.MeshLambertMaterial({color : 0x33ff33, emissive : 0x150d9b});
   this.material = this.lambertMaterial; 
   this.lastMaterial = this.material;
 
