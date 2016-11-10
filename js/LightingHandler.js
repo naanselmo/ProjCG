@@ -68,12 +68,12 @@ LightingHandler.prototype.toggleLights = function (type) {
 function Light() {
   'use strict';
 
-  this.swappedLight = 0;
+  this.swappedIntensity = 0;
 }
 
 Light.prototype.toggle = function () {
-  var temp = this.swappedLight;
-  this.swappedLight = this.light.intensity;
+  var temp = this.swappedIntensity;
+  this.swappedIntensity = this.light.intensity;
   this.light.intensity = temp;
 };
 
