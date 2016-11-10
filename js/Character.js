@@ -13,8 +13,7 @@ function Character(x, y, z) {
   this.basicMaterial = Character.basicMaterial;
   this.phongMaterial = Character.phongMaterial;
   this.lambertMaterial = Character.lambertMaterial;
-  this.material = this.lambertMaterial;
-  this.lastMaterial = this.material;
+  this.material = this[materialToUse];
 
   this.toMove = new THREE.Vector3(0, 0, 0);
   this.velocity = new THREE.Vector3(0, 0, 0);
@@ -145,10 +144,6 @@ Character.prototype.getMaterial = function () {
 
 Character.prototype.setLastMaterial = function (material) {
   this.lastMaterial = material;
-};
-
-Character.prototype.getLastMaterial = function () {
-  return this.lastMaterial;
 };
 
 Character.prototype.translate = function (vectorDistance) {

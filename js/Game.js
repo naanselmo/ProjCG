@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse;
 
 /**
  * Creates the scene
@@ -108,28 +108,34 @@ function animate() {
     toggleWireframe(scene);
   }
 
+  objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
+
   if (inputHandler.isPressed(71)) {
+    if (materialToUse == "phongMaterial") {
+      materialToUse = "lambertMaterial";
+    } else if (materialToUse == "lambertMaterial") {
+      materialToUse = "phongMaterial";
+    } else {
+      materialToUse = lastMaterialToUse;
+    }
+
     for (i = 0; i < objectsToIterate.length; i++) {
       var character = objectsToIterate[i];
-      if (character.getMaterial() == character.lambertMaterial) {
-        character.setMaterial(character.phongMaterial);
-      } else if (character.getMaterial() == character.phongMaterial) {
-        character.setMaterial(character.lambertMaterial);
-      } else {
-        character.setMaterial(character.getLastMaterial());
-      }
+      character.setMaterial(character[materialToUse]);
     }
   }
 
   if (inputHandler.isPressed(76)) {
+    if (materialToUse == "basicMaterial") {
+      materialToUse = lastMaterialToUse;
+    } else {
+      lastMaterialToUse = materialToUse;
+      materialToUse = "basicMaterial";
+    }
+
     for (i = 0; i < objectsToIterate.length; i++) {
       var character = objectsToIterate[i];
-      if (character.getMaterial() == character.basicMaterial) {
-        character.setMaterial(character.getLastMaterial());
-      } else {
-        character.setLastMaterial(character.getMaterial());
-        character.setMaterial(character.basicMaterial);
-      }
+      character.setMaterial(character[materialToUse]);
     }
   }
   // Render
@@ -145,6 +151,10 @@ function init() {
   // Set the world height and width
   gameWidth = 200;
   gameHeight = 100;
+
+  // Set starting material
+  materialToUse = "lambertMaterial";
+  lastMaterialToUse = materialToUse;
 
   // Create components
   createScene();

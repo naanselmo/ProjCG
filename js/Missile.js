@@ -13,8 +13,7 @@ function Missile(x, y, z) {
   this.basicMaterial = Missile.basicMaterial;
   this.phongMaterial = Missile.phongMaterial;
   this.lambertMaterial = Missile.lambertMaterial;
-  this.material = this.lambertMaterial;
-  this.lastMaterial = this.material;
+  this.material = this[materialToUse];
 
   var model = createMissile(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);

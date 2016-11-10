@@ -13,8 +13,7 @@ function Enemy(x, y, z) {
   this.basicMaterial = Enemy.basicMaterial;
   this.phongMaterial = Enemy.phongMaterial;
   this.lambertMaterial = Enemy.lambertMaterial;
-  this.material = this.lambertMaterial;
-  this.lastMaterial = this.material;
+  this.material = this[materialToUse];
 
   var model = createEnemy(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);

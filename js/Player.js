@@ -19,8 +19,7 @@ function Player(x, y, z) {
   this.basicMaterial = Player.basicMaterial;
   this.phongMaterial = Player.phongMaterial;
   this.lambertMaterial = Player.lambertMaterial;
-  this.material = this.lambertMaterial;
-  this.lastMaterial = this.material;
+  this.material = this[materialToUse];
 
   var model = createSpaceship(this.material, 0, 0, 0);
   model.scale.set(1, 1, 1);
@@ -214,6 +213,7 @@ function modelWindshield(material) {
   ];
   // Compute face normals
   geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
 
   var mesh = new THREE.Mesh(geometry, material);
   windshield.add(mesh);
@@ -267,6 +267,7 @@ function modelWinds(material) {
   ];
   // Compute face normals
   geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
 
   var mesh = new THREE.Mesh(geometry, material);
   wind.add(mesh);
