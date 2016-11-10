@@ -29,6 +29,7 @@ Character.basicMaterial = new THREE.MeshBasicMaterial({
 Character.phongMaterial = new THREE.MeshPhongMaterial({
   color: 0x33ff33,
   specular: 0x444444,
+  shininess: 40,
   shading: THREE.SmoothShading
 });
 Character.lambertMaterial = new THREE.MeshLambertMaterial({

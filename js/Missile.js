@@ -27,6 +27,7 @@ Missile.basicMaterial = new THREE.MeshBasicMaterial({
 Missile.phongMaterial = new THREE.MeshPhongMaterial({
   color: 0xc0c011,
   specular: 0x444444,
+  shininess: 40,
   shading: THREE.SmoothShading
 });
 Missile.lambertMaterial = new THREE.MeshLambertMaterial({
@@ -68,4 +69,4 @@ function createMissile(material, x, y, z) {
   missile.rotateX(Math.PI);
   return missile;
 }
-createMissile.geometry = new THREE.SphereGeometry(1, 32, 32);
+createMissile.geometry = new THREE.SphereGeometry(1, 8, 8);

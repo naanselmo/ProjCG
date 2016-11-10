@@ -18,8 +18,8 @@ function LightingHandler() {
     }
   }
 
-  // Create the spot light
-  this.createSpotLight();
+  // Create the directional light
+  this.createDirectionalLight();
 }
 
 /**
@@ -33,7 +33,7 @@ LightingHandler.prototype.update = function (delta) {
     this.toggleLights(AmbientLight);
   }
   if (inputHandler.isPressed(78)) { // N key
-    this.toggleLights(SpotLight);
+    this.toggleLights(DirectionalLight);
   }
   if (inputHandler.isPressed(67)) { // C key
     this.toggleLights(PointLight);
@@ -55,6 +55,10 @@ LightingHandler.prototype.createPointLight = function (x, y, z) {
 
 LightingHandler.prototype.createSpotLight = function (x, y, z, target) {
   this.addLight(new SpotLight(x || 0, y || 0, z || 10, target && target.object3D ? target.object3D : new THREE.Object3D()));
+};
+
+LightingHandler.prototype.createDirectionalLight = function (x, y, z, target) {
+  this.addLight(new DirectionalLight(x || 0, y || 0, z || 10, target && target.object3D ? target.object3D : new THREE.Object3D()));
 };
 
 LightingHandler.prototype.toggleLights = function (type) {
@@ -91,6 +95,22 @@ function AmbientLight() {
   this.light = new THREE.AmbientLight(color, intensity);
 }
 
+DirectionalLight.prototype = Object.create(Light.prototype);
+DirectionalLight.prototype.constructor = DirectionalLight;
+
+function DirectionalLight(x, y, z, target) {
+  'use strict';
+
+  Light.call(this);
+
+  var color = "#ffffff";
+  var intensity = 0.5;
+
+  this.light = new THREE.DirectionalLight(color, intensity);
+  this.light.position.set(x, y, z);
+  this.light.target = target;
+}
+
 PointLight.prototype = Object.create(Light.prototype);
 PointLight.prototype.constructor = PointLight;
 
@@ -100,7 +120,7 @@ function PointLight(x, y, z) {
   Light.call(this);
 
   var color = "#fffaf4";
-  var intensity = 0.33;
+  var intensity = 0.5;
   var distance = 50;
   var decay = 2;
 

@@ -27,10 +27,11 @@ Enemy.basicMaterial = new THREE.MeshBasicMaterial({
 Enemy.phongMaterial = new THREE.MeshPhongMaterial({
   color: 0xcc1212,
   specular: 0x444444,
+  shininess: 40,
   shading: THREE.SmoothShading
 });
 Enemy.lambertMaterial = new THREE.MeshLambertMaterial({
-  color: 0xcc1212,
+  color: 0xcc1212
 });
 
 Enemy.prototype.destroy = function () {
@@ -101,7 +102,7 @@ function createDome(material, x, y, z) {
 
   return mesh;
 }
-createDome.geometry = new THREE.SphereGeometry(4.5, 32, 32, 0, 3, 0, 3);
+createDome.geometry = new THREE.SphereGeometry(4.5, 8, 8, 0, 3, 0, 3);
 
 /**
  * Returns a foot of the enemy spaceship.
