@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, ambientLight, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, headsUpDisplay;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay;
 
 /**
  * Creates the scene
@@ -21,16 +21,6 @@ function createRenderer() {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-}
-
-/**
- * Creates an ambient light
- */
-function createAmbientLight() {
-  'use strict';
-
-  ambientLight = new THREE.AmbientLight(Math.random() * 0x10);
-  scene.add(ambientLight);
 }
 
 /**
@@ -116,11 +106,44 @@ function animate() {
   // Update the HUD
   headsUpDisplay.update(delta);
 
+  // Update all the lights.
+  lightingHandler.update(delta);
+
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
     toggleWireframe(scene);
   }
 
+  objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
+
+  if (inputHandler.isPressed(71)) {
+    if (materialToUse == "phongMaterial") {
+      materialToUse = "lambertMaterial";
+    } else if (materialToUse == "lambertMaterial") {
+      materialToUse = "phongMaterial";
+    } else {
+      materialToUse = lastMaterialToUse;
+    }
+
+    for (i = 0; i < objectsToIterate.length; i++) {
+      var character = objectsToIterate[i];
+      character.setMaterial(character[materialToUse]);
+    }
+  }
+
+  if (inputHandler.isPressed(76)) {
+    if (materialToUse == "basicMaterial") {
+      materialToUse = lastMaterialToUse;
+    } else {
+      lastMaterialToUse = materialToUse;
+      materialToUse = "basicMaterial";
+    }
+
+    for (i = 0; i < objectsToIterate.length; i++) {
+      var character = objectsToIterate[i];
+      character.setMaterial(character[materialToUse]);
+    }
+  }
   // Render
   render();
 }
@@ -135,10 +158,13 @@ function init() {
   gameWidth = 256;
   gameHeight = 128;
 
+  // Set starting material
+  materialToUse = "lambertMaterial";
+  lastMaterialToUse = materialToUse;
+
   // Create components
   createScene();
   createRenderer();
-  //createAmbientLight();
 
   // Create missilePool
   missilePool = new MissilePool();
@@ -155,7 +181,7 @@ function init() {
   for (var i = 0; i < 5; i++) {
     for (var j = 0; j < 5; j++) {
       var enemy = new Enemy(-24 + j * 12, 35 - i * 12);
-      enemy.velocity.set(Math.random(), Math.random(), 0).normalize().multiplyScalar(enemy.maxVelocity);
+      enemy.velocity.set(Math.random() - 0.5, Math.random() - 0.5, 0).normalize().multiplyScalar(enemy.maxVelocity);
       enemies.push(enemy);
       scene.add(enemy);
     }
@@ -167,6 +193,9 @@ function init() {
 
   // Create the HUD
   headsUpDisplay = new HeadsUpDisplay();
+
+  // Create the lighting handler.
+  lightingHandler = new LightingHandler();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();

@@ -10,12 +10,29 @@ function Enemy(x, y, z) {
   Character.call(this, x, y, z);
   this.maxVelocity = 20;
 
-  var model = createEnemy(0, 0, 0);
+  this.basicMaterial = Enemy.basicMaterial;
+  this.phongMaterial = Enemy.phongMaterial;
+  this.lambertMaterial = Enemy.lambertMaterial;
+  this.material = this[materialToUse];
+
+  var model = createEnemy(this.material, 0, 0, 0);
   model.scale.set(0.4, 0.4, 0.4);
   this.object3D.add(model);
   this.boundingBox.setFromObject(this.object3D);
   this.boundingSphere.set(this.boundingBox.getCenter(), Math.max(this.boundingBox.getSize().x, this.boundingBox.getSize().y, this.boundingBox.getSize().z) / 2);
 }
+Enemy.basicMaterial = new THREE.MeshBasicMaterial({
+  color: 0xcc1212
+});
+Enemy.phongMaterial = new THREE.MeshPhongMaterial({
+  color: 0xcc1212,
+  specular: 0x444444,
+  shininess: 40,
+  shading: THREE.SmoothShading
+});
+Enemy.lambertMaterial = new THREE.MeshLambertMaterial({
+  color: 0xcc1212
+});
 
 Enemy.prototype.destroy = function () {
   'use strict';
@@ -55,31 +72,22 @@ Enemy.prototype.handleCollision = function (collisionObject) {
  * @param {Number} z
  * @returns {THREE.Object3D} Enemy object
  */
-function createEnemy(x, y, z) {
+function createEnemy(material, x, y, z) {
   'use strict';
 
   // Make the main body, the other things will attach.
-  var enemy = createEnemyBody(createEnemy.material, 0, 0, 0);
+  var enemy = createEnemyBody(material, 0, 0, 0);
 
   // makes the dome and the base
-  enemy.add(createDome(createEnemy.materialDome, 0, 0, 0));
-  enemy.add(createBase(createEnemy.material, 0, 0, 0));
+  enemy.add(createDome(material, 0, 0, 0));
+  enemy.add(createBase(material, 0, 0, 0));
 
   return enemy;
 }
-createEnemy.materialDome = new THREE.MeshBasicMaterial({
-  color: 0x333333,
-  wireframe: false
-});
-createEnemy.material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: false
-});
 
 /**
  * Returns the dome of the enemy.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
@@ -94,12 +102,11 @@ function createDome(material, x, y, z) {
 
   return mesh;
 }
-createDome.geometry = new THREE.SphereGeometry(4.5, 32, 32, 0, 3, 0, 3);
+createDome.geometry = new THREE.SphereGeometry(4.5, 8, 8, 0, 3, 0, 3);
 
 /**
  * Returns a foot of the enemy spaceship.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
@@ -128,7 +135,6 @@ createFoot.geometry = new THREE.CylinderGeometry(0.5, 1, 0.5);
 /**
  * Returns the base of the enemy.
  *
- * @param {THREE.Material} material
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z

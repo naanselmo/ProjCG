@@ -10,6 +10,11 @@ function Character(x, y, z) {
   this.boundingSphere = new THREE.Sphere();
   this.boundingMovement = new THREE.Vector3(0, 0, 0);
 
+  this.basicMaterial = Character.basicMaterial;
+  this.phongMaterial = Character.phongMaterial;
+  this.lambertMaterial = Character.lambertMaterial;
+  this.material = this[materialToUse];
+
   this.toMove = new THREE.Vector3(0, 0, 0);
   this.velocity = new THREE.Vector3(0, 0, 0);
   this.acceleration = new THREE.Vector3(0, 0, 0);
@@ -18,6 +23,18 @@ function Character(x, y, z) {
   this.rotationVelocity = new THREE.Vector3(0, 0, 0);
   this.maxRotation = 0;
 }
+Character.basicMaterial = new THREE.MeshBasicMaterial({
+  color: 0x33ff33
+});
+Character.phongMaterial = new THREE.MeshPhongMaterial({
+  color: 0x33ff33,
+  specular: 0x444444,
+  shininess: 40,
+  shading: THREE.SmoothShading
+});
+Character.lambertMaterial = new THREE.MeshLambertMaterial({
+  color: 0x33ff33
+});
 
 Character.prototype.destroy = function () {
   'use strict';
@@ -104,6 +121,30 @@ Character.prototype.setVisible = function (visibility) {
   'use strict';
 
   this.object3D.visible = visibility;
+};
+
+Character.prototype.setMaterial = function (material) {
+  'use strict';
+
+  material.wireframe = false;
+  this.material = material;
+  this.object3D.traverse(function (object3D) {
+    if (object3D.hasOwnProperty("material")) {
+      object3D.material = material;
+    }
+    if (object3D.hasOwnProperty("normalsNeedUpdate")) {
+      object3D.normalsNeedUpdate = true;
+    }
+  });
+  material.needsUpdate = true;
+};
+
+Character.prototype.getMaterial = function () {
+  return this.material;
+};
+
+Character.prototype.setLastMaterial = function (material) {
+  this.lastMaterial = material;
 };
 
 Character.prototype.translate = function (vectorDistance) {
