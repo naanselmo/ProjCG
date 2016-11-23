@@ -67,6 +67,7 @@ function createMissile(material, x, y, z) {
 
   var missile = new THREE.Mesh(createMissile.geometry, material);
   missile.rotateX(Math.PI);
+  missile.position.set(x, y, z);
   return missile;
 }
 createMissile.geometry = new THREE.SphereGeometry(1, 8, 8);

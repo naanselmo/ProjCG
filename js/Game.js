@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse,paused=false;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay, paused;
 
 /**
  * Creates the scene
@@ -17,6 +17,7 @@ function createRenderer() {
   'use strict';
 
   renderer = new THREE.WebGLRenderer();
+  renderer.autoClear = false;
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -50,6 +51,7 @@ function onResize() {
 
   // Resize the current camera.
   cameraHandler.resize();
+  headsUpDisplay.resize();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -60,30 +62,65 @@ function render() {
   'use strict';
 
   renderer.render(scene, cameraHandler.getCamera());
+  renderer.clear(false, true, false);
+  headsUpDisplay.render();
 }
 
 /**
  * Animates the game
  */
 function animate() {
-  	"use strict";
-  
-  	// Wait for frame
-  	requestAnimationFrame(animate);
-  	// Animate every relevant object
-	var i = 0;
-	var delta = animate.clock.getDelta();  
-	var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
-	
-	if (inputHandler.isPressed(83)) {
-	   paused=!paused;
-	}
+  "use strict";
 
- // If A was pressed, toggle wireframe
-	  if (inputHandler.isPressed(65)) {
-	    toggleWireframe(scene);
-	  }
-   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
+  // Wait for frame
+  requestAnimationFrame(animate);
+
+  // Animate every relevant object
+  var delta = animate.clock.getDelta();
+  var i = 0;
+  var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
+
+  // All of these tasks are independent and could be parallelized
+  // If only Javascript supported decent threading...
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    if (objectsToIterate[i].isVisible()) {
+      objectsToIterate[i].animate(delta);
+    }
+  }
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    if (objectsToIterate[i].isVisible()) {
+      objectsToIterate[i].checkConditions();
+    }
+  }
+
+  for (i = 0; i < objectsToIterate.length; i++) {
+    if (objectsToIterate[i].isVisible()) {
+      objectsToIterate[i].updatePositions();
+    }
+  }
+
+  // Update all cameras.
+  cameraHandler.update(delta);
+
+  // Update the HUD
+  headsUpDisplay.update(delta);
+
+  // Update all the lights.
+  lightingHandler.update(delta);
+
+  // If A was pressed, toggle wireframe
+  if (inputHandler.isPressed(65)) {
+    toggleWireframe(scene);
+  }
+
+  // If S is pressed, pause the game
+  if (inputHandler.isPressed(83)) {
+    paused = !paused;
+  }
+
+  objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
 
   if (inputHandler.isPressed(71)) {
     if (materialToUse == "phongMaterial") {
@@ -113,40 +150,6 @@ function animate() {
       character.setMaterial(character[materialToUse]);
     }
   }
-  if (paused==false){
-
-  		
-	  // All of these tasks are independent and could be parallelized
-	  // If only Javascript supported decent threading...
-
-	  for (i = 0; i < objectsToIterate.length; i++) {
-	    if (objectsToIterate[i].isVisible()) {
-	      objectsToIterate[i].animate(delta);
-	    }
-	  }
-
-	  for (i = 0; i < objectsToIterate.length; i++) {
-	    if (objectsToIterate[i].isVisible()) {
-	      objectsToIterate[i].checkConditions();
-	    }
-	  }
-
-	  for (i = 0; i < objectsToIterate.length; i++) {
-	    if (objectsToIterate[i].isVisible()) {
-	      objectsToIterate[i].updatePositions();
-	    }
-	  }
-
-	  // Update all cameras.
-	  cameraHandler.update(delta);
-
-	  // Update all the lights.
-	  lightingHandler.update(delta);
-
-	 
-
-	
-  }
 
   // Render
   render();
@@ -154,20 +157,22 @@ function animate() {
 /**
  * Creates a background with an image texture
  */
-function createTexture(){
-	 var loader = new THREE.TextureLoader();
-  var texture  = '../textures/background.jpg';
-  loader.load('../textures/background.jpg', 
-  	function (texture) {
-		  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 1, gameHeight * 1);
-  		var material = new THREE.MeshBasicMaterial({
-  			map: texture 
-  		});
-  		var background = new THREE.Mesh(geometry, material);
-  		background.position.z = -3;
-  		scene.add(background);
-	});
+
+function createTexture() {
+  var loader = new THREE.TextureLoader();
+  var texture = '../textures/background.jpg';
+  loader.load('../textures/background.jpg',
+    function (texture) {
+      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 1, gameHeight * 1);
+      var material = new THREE.MeshBasicMaterial({
+        map: texture
+      });
+      var background = new THREE.Mesh(geometry, material);
+      background.position.z = -3;
+      scene.add(background);
+    });
 }
+
 /**
  * Initializes key variables and starts the game
  */
@@ -177,7 +182,10 @@ function init() {
   // Set the world height and width
   gameWidth = 200;
   gameHeight = 100;
-  
+
+  // Pause disabled on start
+  pause = false;
+
   // Set starting material
   materialToUse = "lambertMaterial";
   lastMaterialToUse = materialToUse;
@@ -213,6 +221,9 @@ function init() {
   // Create camera handler. Create the handler after player since some cameras
   // depend on the player's position.
   cameraHandler = new CameraHandler();
+
+  // Create the HUD
+  headsUpDisplay = new HeadsUpDisplay();
 
   // Create the lighting handler.
   lightingHandler = new LightingHandler();
