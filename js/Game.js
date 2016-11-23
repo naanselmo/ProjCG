@@ -147,7 +147,23 @@ function animate() {
   // Render
   render();
 }
-
+/**
+ * Creates a background with an image texture
+ */
+function createTexture(){
+	 var loader = new THREE.TextureLoader();
+  var texture  = '../textures/background.jpg';
+  loader.load('../textures/background.jpg',
+  	function (texture) {
+		  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 2, gameHeight * 2);
+  		var material = new THREE.MeshBasicMaterial({
+  			map: texture
+  		});
+  		var background = new THREE.Mesh(geometry, material);
+  		background.position.z = -2;
+  		scene.add(background);
+	});
+}
 /**
  * Initializes key variables and starts the game
  */
@@ -155,8 +171,8 @@ function init() {
   'use strict';
 
   // Set the world height and width
-  gameWidth = 256;
-  gameHeight = 128;
+  gameWidth = 200;
+  gameHeight = 100;
 
   // Set starting material
   materialToUse = "lambertMaterial";
@@ -165,6 +181,9 @@ function init() {
   // Create components
   createScene();
   createRenderer();
+
+  //Create background texture
+  createTexture();
 
   // Create missilePool
   missilePool = new MissilePool();
