@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse,paused=false;
 
 /**
  * Creates the scene
@@ -66,49 +66,24 @@ function render() {
  * Animates the game
  */
 function animate() {
-  "use strict";
+  	"use strict";
+  
+  	// Wait for frame
+  	requestAnimationFrame(animate);
+  	// Animate every relevant object
+	var i = 0;
+	var delta = animate.clock.getDelta();  
+	var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
+	
+	if (inputHandler.isPressed(83)) {
+	   paused=!paused;
+	}
 
-  // Wait for frame
-  requestAnimationFrame(animate);
-
-  // Animate every relevant object
-  var delta = animate.clock.getDelta();
-  var i = 0;
-  var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
-
-  // All of these tasks are independent and could be parallelized
-  // If only Javascript supported decent threading...
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].animate(delta);
-    }
-  }
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].checkConditions();
-    }
-  }
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].updatePositions();
-    }
-  }
-
-  // Update all cameras.
-  cameraHandler.update(delta);
-
-  // Update all the lights.
-  lightingHandler.update(delta);
-
-  // If A was pressed, toggle wireframe
-  if (inputHandler.isPressed(65)) {
-    toggleWireframe(scene);
-  }
-
-  objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
+ // If A was pressed, toggle wireframe
+	  if (inputHandler.isPressed(65)) {
+	    toggleWireframe(scene);
+	  }
+   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
 
   if (inputHandler.isPressed(71)) {
     if (materialToUse == "phongMaterial") {
@@ -138,6 +113,41 @@ function animate() {
       character.setMaterial(character[materialToUse]);
     }
   }
+  if (paused==false){
+
+  		
+	  // All of these tasks are independent and could be parallelized
+	  // If only Javascript supported decent threading...
+
+	  for (i = 0; i < objectsToIterate.length; i++) {
+	    if (objectsToIterate[i].isVisible()) {
+	      objectsToIterate[i].animate(delta);
+	    }
+	  }
+
+	  for (i = 0; i < objectsToIterate.length; i++) {
+	    if (objectsToIterate[i].isVisible()) {
+	      objectsToIterate[i].checkConditions();
+	    }
+	  }
+
+	  for (i = 0; i < objectsToIterate.length; i++) {
+	    if (objectsToIterate[i].isVisible()) {
+	      objectsToIterate[i].updatePositions();
+	    }
+	  }
+
+	  // Update all cameras.
+	  cameraHandler.update(delta);
+
+	  // Update all the lights.
+	  lightingHandler.update(delta);
+
+	 
+
+	
+  }
+
   // Render
   render();
 }
@@ -149,12 +159,12 @@ function createTexture(){
   var texture  = '../textures/background.jpg';
   loader.load('../textures/background.jpg', 
   	function (texture) {
-		  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 2, gameHeight * 2);
+		  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 1, gameHeight * 1);
   		var material = new THREE.MeshBasicMaterial({
   			map: texture 
   		});
   		var background = new THREE.Mesh(geometry, material);
-  		background.position.z = -2;
+  		background.position.z = -3;
   		scene.add(background);
 	});
 }
