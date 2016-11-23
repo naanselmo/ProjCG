@@ -38,11 +38,18 @@ LightingHandler.prototype.update = function (delta) {
   if (inputHandler.isPressed(67)) { // C key
     this.toggleLights(PointLight);
   }
+  if (inputHandler.isPressed(72)) { // H key
+    this.toggleLights(SpotLight);
+  }
 };
 
 LightingHandler.prototype.addLight = function (light) {
-  this.lights.push(light);
+  this.registerLight(light);
   scene.add(light.light);
+};
+
+LightingHandler.prototype.registerLight = function (light) {
+  this.lights.push(light);
 };
 
 LightingHandler.prototype.createAmbientLight = function () {
@@ -137,15 +144,16 @@ function SpotLight(x, y, z, target) {
   Light.call(this);
 
   var color = "#fffaf4";
-  var intensity = 1;
-  var distance = 0.0;
-  var angle = Math.PI / 2;
+  var intensity = 2;
+  var distance = gameHeight/2;
+  var angle = gameWidth/gameHeight/4;
   var penumbra = 0.0;
-  var decay = 2;
+  var decay = 0;
 
   this.light = new THREE.SpotLight(color, intensity, distance, angle, penumbra, decay);
   this.light.position.set(x, y, z);
   this.light.castShadow = false;
+  // Make sure target is in scene!!
   this.light.target = target;
 }
 

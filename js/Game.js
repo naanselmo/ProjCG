@@ -159,6 +159,9 @@ function init() {
   // Create components
   createScene();
   createRenderer();
+  
+  // Create the lighting handler.
+  lightingHandler = new LightingHandler();
 
   // Create missilePool
   missilePool = new MissilePool();
@@ -184,9 +187,6 @@ function init() {
   // Create camera handler. Create the handler after player since some cameras
   // depend on the player's position.
   cameraHandler = new CameraHandler();
-
-  // Create the lighting handler.
-  lightingHandler = new LightingHandler();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();
