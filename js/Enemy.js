@@ -102,7 +102,7 @@ function createDome(material, x, y, z) {
 
   return mesh;
 }
-createDome.geometry = new THREE.SphereGeometry(4.5, 8, 8, 0, 3, 0, 3);
+createDome.geometry = new THREE.SphereGeometry(5, 8, 8, 0, 3, 0, 3);
 
 /**
  * Returns a foot of the enemy spaceship.

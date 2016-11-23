@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay, gamePaused, gameOver;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay, gamePaused, gameOver, textureLoader;
 
 /**
  * Creates the scene
@@ -88,7 +88,7 @@ function animate() {
   // If S is pressed, pause the game
   if (inputHandler.isPressed(83)) {
     gamePaused = !gamePaused;
-    HeadsUpDisplay.togglePause();
+    headsUpDisplay.togglePause();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
@@ -162,11 +162,9 @@ function animate() {
  */
 
 function createTexture() {
-  var loader = new THREE.TextureLoader();
-  var texture = '../textures/background.jpg';
-  loader.load('../textures/background.jpg',
+  textureLoader.load('textures/background1.jpg',
     function (texture) {
-      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 1, gameHeight * 1);
+      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth / 4, gameHeight / 4);
       var material = new THREE.MeshBasicMaterial({
         map: texture
       });
@@ -193,6 +191,9 @@ function init() {
   // Set starting material
   materialToUse = "lambertMaterial";
   lastMaterialToUse = materialToUse;
+
+  // Create the texture loader
+  textureLoader = new THREE.TextureLoader();
 
   // Create components
   createScene();

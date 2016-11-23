@@ -8,12 +8,12 @@ function HeadsUpDisplay() {
   this.top = 50;
   this.scene = new THREE.Scene();
   this.camera = new THREE.OrthographicCamera();
-  this.camera.near = -1000 - 25;
-  this.camera.far = -1000 + 25;
+  this.camera.near = -25;
+  this.camera.far = +25;
   this.lives = [];
   this.livesCount = 0;
   for (var s = 0; s < player.lives; s++) {
-    var spaceship = createSpaceship(Player.basicMaterial, this.right + 2 - 11 * (1 + s), this.top - 8, 1000);
+    var spaceship = createSpaceship(Player.basicMaterial, this.right + 2 - 11 * (1 + s), this.top - 8, 0);
     this.scene.add(spaceship);
     this.lives[s] = spaceship;
     this.livesCount++;
@@ -21,11 +21,13 @@ function HeadsUpDisplay() {
   this.missiles = [];
   this.missileCount = 0;
   for (var m = 0; m < player.missileCharge; m++) {
-    var missile = createMissile(Missile.basicMaterial, this.right - 7 * (1 + m), this.top - 20, 1000);
+    var missile = createMissile(Missile.basicMaterial, this.right - 7 * (1 + m), this.top - 20, 0);
     this.scene.add(missile);
     this.missiles[m] = missile;
     this.missileCount++;
   }
+  textureLoader.load('textures/game_over.png', this.createGameOver);
+  textureLoader.load('textures/game_paused.png', this.createGamePaused);
   this.resize();
 }
 
@@ -36,6 +38,32 @@ HeadsUpDisplay.prototype.render = function () {
   'use strict';
 
   renderer.render(this.scene, this.camera);
+};
+
+/**
+ * Create Game Over overlay
+ */
+HeadsUpDisplay.prototype.createGameOver = function (texture) {
+  var geometry = new THREE.PlaneGeometry(this.right * 2, this.top * 2, gameWidth / 4, gameHeight / 4);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture
+  });
+  headsUpDisplay.gameOverOverlay = new THREE.Mesh(geometry, material);
+  headsUpDisplay.gameOverOverlay.visible = false;
+  scene.add(headsUpDisplay.gameOverOverlay);
+};
+
+/**
+ * Create Game Paused overlay
+ */
+HeadsUpDisplay.prototype.createGamePaused = function (texture) {
+  var geometry = new THREE.PlaneGeometry(this.right * 2, this.top * 2, gameWidth / 4, gameHeight / 4);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture
+  });
+  headsUpDisplay.gamePausedOverlay = new THREE.Mesh(geometry, material);
+  headsUpDisplay.gamePausedOverlay.visible = false;
+  scene.add(headsUpDisplay.gamePausedOverlay);
 };
 
 /**
@@ -87,6 +115,8 @@ HeadsUpDisplay.prototype.gainMissile = function () {
  */
 HeadsUpDisplay.prototype.togglePause = function () {
   'use strict';
+
+  this.gamePausedOverlay.visible = !this.gamePausedOverlay.visible;
 };
 
 /**
@@ -94,6 +124,8 @@ HeadsUpDisplay.prototype.togglePause = function () {
  */
 HeadsUpDisplay.prototype.gameOver = function () {
   'use strict';
+
+  this.gameOverOverlay.visible = true;
 };
 
 /**
