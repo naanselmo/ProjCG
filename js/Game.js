@@ -89,6 +89,7 @@ function animate() {
   if (inputHandler.isPressed(83)) {
     gamePaused = !gamePaused;
     headsUpDisplay.togglePause();
+    inputHandler.clear();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
@@ -162,7 +163,7 @@ function animate() {
  */
 
 function createTexture() {
-  textureLoader.load('textures/background1.jpg',
+  loader.load('../textures/background1.jpg',
     function (texture) {
       var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth / 4, gameHeight / 4);
       var material = new THREE.MeshBasicMaterial({
@@ -199,6 +200,9 @@ function init() {
   createScene();
   createRenderer();
 
+  // Create the lighting handler.
+  lightingHandler = new LightingHandler();
+
   //Create background texture
   createTexture();
 
@@ -229,9 +233,6 @@ function init() {
 
   // Create the HUD
   headsUpDisplay = new HeadsUpDisplay();
-
-  // Create the lighting handler.
-  lightingHandler = new LightingHandler();
 
   // Create clock and begin animating
   animate.clock = new THREE.Clock();

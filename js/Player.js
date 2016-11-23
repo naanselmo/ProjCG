@@ -181,8 +181,21 @@ function modelBody(material) {
   geometry.computeFaceNormals();
   geometry.computeVertexNormals();
 
+  // Create the mesh for the body.
   var mesh = new THREE.Mesh(geometry, material);
   body.add(mesh);
+
+  // Create the spotlight
+  var target = new THREE.Object3D();
+  target.position.set(0, 10, 0);
+  var spotLight = new SpotLight(0, -2, 0, target);
+  lightingHandler.registerLight(spotLight);
+  body.add(target);
+  body.add(spotLight.light);
+
+  // Just a helper to debug the spotlight.
+  // var spotLightHelper = new THREE.SpotLightHelper( spotLight.light );
+  // scene.add( spotLightHelper );
   return body;
 }
 
