@@ -12,7 +12,7 @@ function HeadsUpDisplay() {
   this.camera.far = -1000 + 25;
   this.lives = [];
   this.livesCount = 0;
-  for (var s = 0; s < 3; s++) {
+  for (var s = 0; s < player.lives; s++) {
     var spaceship = createSpaceship(Player.basicMaterial, this.right + 2 - 11 * (1 + s), this.top - 8, 1000);
     this.scene.add(spaceship);
     this.lives[s] = spaceship;
@@ -20,7 +20,7 @@ function HeadsUpDisplay() {
   }
   this.missiles = [];
   this.missileCount = 0;
-  for (var m = 0; m < 5; m++) {
+  for (var m = 0; m < player.missileCharge; m++) {
     var missile = createMissile(Missile.basicMaterial, this.right - 7 * (1 + m), this.top - 20, 1000);
     this.scene.add(missile);
     this.missiles[m] = missile;
@@ -80,6 +80,20 @@ HeadsUpDisplay.prototype.gainMissile = function () {
   'use strict';
 
   this.missiles[this.missileCount++].visible = true;
+};
+
+/**
+ * Toggle pause menu
+ */
+HeadsUpDisplay.prototype.togglePause = function () {
+  'use strict';
+};
+
+/**
+ * Game over
+ */
+HeadsUpDisplay.prototype.gameOver = function () {
+  'use strict';
 };
 
 /**

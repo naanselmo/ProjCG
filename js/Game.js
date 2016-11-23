@@ -1,5 +1,5 @@
 // Global scope
-var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay, paused;
+var cameraHandler, scene, renderer, lightingHandler, inputHandler, player, enemies, gameWidth, gameHeight, missilePool, materialToUse, lastMaterialToUse, headsUpDisplay, gamePaused, gameOver;
 
 /**
  * Creates the scene
@@ -87,7 +87,8 @@ function animate() {
 
   // If S is pressed, pause the game
   if (inputHandler.isPressed(83)) {
-    paused = !paused;
+    gamePaused = !gamePaused;
+    HeadsUpDisplay.togglePause();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
@@ -124,7 +125,7 @@ function animate() {
   // All of these tasks are independent and could be parallelized
   // If only Javascript supported decent threading...
 
-  if (!paused) {
+  if (!gamePaused && !gameOver) {
     for (i = 0; i < objectsToIterate.length; i++) {
       if (objectsToIterate[i].isVisible()) {
         objectsToIterate[i].animate(delta);
@@ -185,8 +186,9 @@ function init() {
   gameWidth = 200;
   gameHeight = 100;
 
-  // Pause disabled on start
-  paused = false;
+  // Pause disabled on start, game not over yet
+  gamePaused = false;
+  gameOver = false;
 
   // Set starting material
   materialToUse = "lambertMaterial";

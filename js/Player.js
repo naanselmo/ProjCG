@@ -15,6 +15,7 @@ function Player(x, y, z) {
   this.missileCooldownLeft = this.missileCooldown;
   this.missileMaxCharge = 5;
   this.missileCharge = this.missileMaxCharge;
+  this.lives = 3;
 
   this.basicMaterial = Player.basicMaterial;
   this.phongMaterial = Player.phongMaterial;
@@ -106,6 +107,12 @@ Player.prototype.handleCollision = function (collisionObject) {
   this.toMove.multiplyScalar(0);
   this.velocity.multiplyScalar(0);
   headsUpDisplay.loseLife();
+  this.lives--;
+
+  if (this.lives === 0) {
+    gameOver = true;
+    headsUpDisplay.gameOver();
+  }
 };
 
 /**
