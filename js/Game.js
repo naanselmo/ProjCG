@@ -89,6 +89,7 @@ function animate() {
   if (inputHandler.isPressed(83)) {
     gamePaused = !gamePaused;
     HeadsUpDisplay.togglePause();
+    inputHandler.clear();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
@@ -163,8 +164,7 @@ function animate() {
 
 function createTexture() {
   var loader = new THREE.TextureLoader();
-  var texture = '../textures/background.jpg';
-  loader.load('../textures/background.jpg',
+  loader.load('../textures/background1.jpg',
     function (texture) {
       var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 1, gameHeight * 1);
       var material = new THREE.MeshBasicMaterial({
