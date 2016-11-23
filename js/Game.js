@@ -80,36 +80,6 @@ function animate() {
   var i = 0;
   var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
 
-  // All of these tasks are independent and could be parallelized
-  // If only Javascript supported decent threading...
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].animate(delta);
-    }
-  }
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].checkConditions();
-    }
-  }
-
-  for (i = 0; i < objectsToIterate.length; i++) {
-    if (objectsToIterate[i].isVisible()) {
-      objectsToIterate[i].updatePositions();
-    }
-  }
-
-  // Update all cameras.
-  cameraHandler.update(delta);
-
-  // Update the HUD
-  headsUpDisplay.update(delta);
-
-  // Update all the lights.
-  lightingHandler.update(delta);
-
   // If A was pressed, toggle wireframe
   if (inputHandler.isPressed(65)) {
     toggleWireframe(scene);
@@ -151,6 +121,38 @@ function animate() {
     }
   }
 
+  // All of these tasks are independent and could be parallelized
+  // If only Javascript supported decent threading...
+
+  if (!paused) {
+    for (i = 0; i < objectsToIterate.length; i++) {
+      if (objectsToIterate[i].isVisible()) {
+        objectsToIterate[i].animate(delta);
+      }
+    }
+
+    for (i = 0; i < objectsToIterate.length; i++) {
+      if (objectsToIterate[i].isVisible()) {
+        objectsToIterate[i].checkConditions();
+      }
+    }
+
+    for (i = 0; i < objectsToIterate.length; i++) {
+      if (objectsToIterate[i].isVisible()) {
+        objectsToIterate[i].updatePositions();
+      }
+    }
+  }
+
+  // Update all cameras.
+  cameraHandler.update(delta);
+
+  // Update the HUD
+  headsUpDisplay.update(delta);
+
+  // Update all the lights.
+  lightingHandler.update(delta);
+
   // Render
   render();
 }
@@ -184,7 +186,7 @@ function init() {
   gameHeight = 100;
 
   // Pause disabled on start
-  pause = false;
+  paused = false;
 
   // Set starting material
   materialToUse = "lambertMaterial";

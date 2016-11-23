@@ -13,7 +13,7 @@ function HeadsUpDisplay() {
   this.lives = [];
   this.livesCount = 0;
   for (var s = 0; s < 3; s++) {
-    var spaceship = createSpaceship(Player.basicMaterial, this.right - 10 * (1 + s), this.top - 8, 1000);
+    var spaceship = createSpaceship(Player.basicMaterial, this.right + 2 - 11 * (1 + s), this.top - 8, 1000);
     this.scene.add(spaceship);
     this.lives[s] = spaceship;
     this.livesCount++;
