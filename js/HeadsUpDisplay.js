@@ -4,21 +4,28 @@
 function HeadsUpDisplay() {
   'use strict';
 
-  this.width = 2048;
-  this.height = 1024;
-  this.canvas = document.createElement('canvas');
-  this.createCamera();
-  this.bitmap = this.canvas.getContext('2d');
+  this.right = 100;
+  this.top = 50;
   this.scene = new THREE.Scene();
-  this.texture = new THREE.Texture(this.canvas);
-  this.texture.needsUpdate = true;
-  this.material = new THREE.MeshBasicMaterial({
-    map: this.texture
-  });
-  this.material.transparent = true;
-  this.material.needsUpdate = true;
-  this.scene.add(new THREE.Mesh(new THREE.PlaneGeometry(gameWidth, gameHeight), this.material));
-  this.parameters = {};
+  this.camera = new THREE.OrthographicCamera();
+  this.camera.near = -1000 - 25;
+  this.camera.far = -1000 + 25;
+  this.lives = [];
+  this.livesCount = 0;
+  for (var s = 0; s < 3; s++) {
+    var spaceship = createSpaceship(Player.basicMaterial, this.right - 10 * (1 + s), this.top - 8, 1000);
+    this.scene.add(spaceship);
+    this.lives[s] = spaceship;
+    this.livesCount++;
+  }
+  this.missiles = [];
+  this.missileCount = 0;
+  for (var m = 0; m < 5; m++) {
+    var missile = createMissile(Missile.basicMaterial, this.right - 7 * (1 + m), this.top - 20, 1000);
+    this.scene.add(missile);
+    this.missiles[m] = missile;
+    this.missileCount++;
+  }
   this.resize();
 }
 
@@ -32,13 +39,54 @@ HeadsUpDisplay.prototype.render = function () {
 };
 
 /**
- * Resizes the canvas and the HUD
+ * Remove lives
+ */
+HeadsUpDisplay.prototype.loseLife = function () {
+  'use strict';
+
+  if (this.livesCount === 0) {
+    return;
+  }
+
+  this.lives[--this.livesCount].visible = false;
+};
+
+/**
+ * Gain lives
+ */
+HeadsUpDisplay.prototype.gainLife = function () {
+  'use strict';
+
+  this.lives[this.livesCount++].visible = true;
+};
+
+/**
+ * Remove missiles
+ */
+HeadsUpDisplay.prototype.loseMissile = function () {
+  'use strict';
+
+  if (this.missilesCount === 0) {
+    return;
+  }
+
+  this.missiles[--this.missileCount].visible = false;
+};
+
+/**
+ * Gain missiles
+ */
+HeadsUpDisplay.prototype.gainMissile = function () {
+  'use strict';
+
+  this.missiles[this.missileCount++].visible = true;
+};
+
+/**
+ * Resizes the HUD
  */
 HeadsUpDisplay.prototype.resize = function () {
   'use strict';
-
-  this.canvas.width = this.width;
-  this.canvas.height = this.height;
 
   var scaling = Math.min(renderer.getSize().width / gameWidth, renderer.getSize().height / gameHeight);
   var scalingWidth = (renderer.getSize().width / gameWidth) / scaling;
@@ -54,8 +102,6 @@ HeadsUpDisplay.prototype.resize = function () {
 
   // Update the projection matrix.
   this.camera.updateProjectionMatrix();
-  this.texture.needsUpdate = true;
-  this.material.needsUpdate = true;
 };
 
 /**
@@ -63,46 +109,4 @@ HeadsUpDisplay.prototype.resize = function () {
  */
 HeadsUpDisplay.prototype.update = function () {
   'use strict';
-
-  this.bitmap.clearRect(0, 0, this.width, this.height);
-  this.bitmap.font = 'Bold 20px Lucida Sans Unicode';
-  this.bitmap.textAlign = 'left';
-  this.bitmap.fillStyle = 'rgb(200, 200, 200)';
-  var height = this.height / 8;
-  for (var property in this.parameters) {
-    this.bitmap.fillText(property + ": " + String(this.parameters[property]), this.width * (7 / 8), height);
-    height += this.height / 32;
-  }
-};
-
-HeadsUpDisplay.prototype.createCamera = function () {
-  'use strict';
-
-  this.camera = new THREE.OrthographicCamera();
-  this.camera.near = -50;
-  this.camera.far = 50;
-};
-
-HeadsUpDisplay.prototype.addParameter = function (parameter, value) {
-  'use strict';
-
-  this.parameters[parameter] = value || "";
-  this.texture.needsUpdate = true;
-  this.material.needsUpdate = true;
-};
-
-HeadsUpDisplay.prototype.removeParameter = function (parameter) {
-  'use strict';
-
-  delete this.parameters[parameter];
-  this.texture.needsUpdate = true;
-  this.material.needsUpdate = true;
-};
-
-HeadsUpDisplay.prototype.setParameter = function (parameter, value) {
-  'use strict';
-
-  this.parameters[parameter] = value;
-  this.texture.needsUpdate = true;
-  this.material.needsUpdate = true;
 };

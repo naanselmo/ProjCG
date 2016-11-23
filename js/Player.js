@@ -73,6 +73,7 @@ Player.prototype.animate = function (delta) {
   while (this.missileCharge < this.missileMaxCharge && this.missileCooldownLeft <= 0) {
     this.missileCooldownLeft += this.missileCooldown;
     this.missileCharge++;
+    headsUpDisplay.gainMissile();
   }
   if (this.missileCharge >= this.missileMaxCharge) {
     this.missileCooldownLeft = this.missileCooldown;
@@ -82,6 +83,7 @@ Player.prototype.animate = function (delta) {
 
   if (inputHandler.isPressed(66)) { // B key
     if (this.missileCharge > 0) {
+      headsUpDisplay.loseMissile();
       this.missileCharge--;
       missilePool.requestMissile(this.getPositionX(), this.getPositionY() + 6.5, this.getPositionZ());
     }
@@ -103,6 +105,7 @@ Player.prototype.handleCollision = function (collisionObject) {
 
   this.toMove.multiplyScalar(0);
   this.velocity.multiplyScalar(0);
+  headsUpDisplay.loseLife();
 };
 
 /**

@@ -62,6 +62,7 @@ function render() {
   'use strict';
 
   renderer.render(scene, cameraHandler.getCamera());
+  renderer.clear(false, true, false);
   headsUpDisplay.render();
 }
 
@@ -150,19 +151,19 @@ function animate() {
 /**
  * Creates a background with an image texture
  */
-function createTexture(){
-	 var loader = new THREE.TextureLoader();
-  var texture  = '../textures/background.jpg';
+function createTexture() {
+  var loader = new THREE.TextureLoader();
+  var texture = '../textures/background.jpg';
   loader.load('../textures/background.jpg',
-  	function (texture) {
-		  var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 2, gameHeight * 2);
-  		var material = new THREE.MeshBasicMaterial({
-  			map: texture
-  		});
-  		var background = new THREE.Mesh(geometry, material);
-  		background.position.z = -2;
-  		scene.add(background);
-	});
+    function (texture) {
+      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth * 2, gameHeight * 2);
+      var material = new THREE.MeshBasicMaterial({
+        map: texture
+      });
+      var background = new THREE.Mesh(geometry, material);
+      background.position.z = -2;
+      scene.add(background);
+    });
 }
 /**
  * Initializes key variables and starts the game
