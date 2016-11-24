@@ -88,8 +88,8 @@ function restart() {
   for (var d = 0; d < enemies.length; d++) {
     enemies[d].destroy(false);
   }
-  for (var i = 0; i < missilePool.missiles.length; i++) {
-    missilePool.missiles[i].destroy();
+  for (var m = 0; m < missilePool.missiles.length; m++) {
+    missilePool.missiles[m].destroy();
   }
 
   // Add player
