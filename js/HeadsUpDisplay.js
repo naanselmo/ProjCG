@@ -92,6 +92,10 @@ HeadsUpDisplay.prototype.loseLife = function () {
 HeadsUpDisplay.prototype.gainLife = function () {
   'use strict';
 
+  if (!this.lives[this.livesCount]) {
+    return;
+  }
+
   this.lives[this.livesCount].visible = true;
   this.livesCount++;
 };
@@ -116,7 +120,10 @@ HeadsUpDisplay.prototype.loseMissile = function () {
 HeadsUpDisplay.prototype.gainMissile = function () {
   'use strict';
 
-  console.log(this.missileCount);
+  if (!this.missiles[this.missileCount]) {
+    return;
+  }
+
   this.missiles[this.missileCount].visible = true;
   this.missileCount++;
 };
@@ -147,12 +154,12 @@ HeadsUpDisplay.prototype.restartGame = function () {
 
   this.gameOverOverlay.visible = false;
 
-  while (headsUpDisplay.missileCount < player.missileCharge) {
-    headsUpDisplay.gainMissile();
+  while (this.missileCount < player.missileCharge) {
+    this.gainMissile();
   }
 
-  while (headsUpDisplay.livesCount < player.lives) {
-    headsUpDisplay.gainLife();
+  while (this.livesCount < player.lives) {
+    this.gainLife();
   }
 };
 

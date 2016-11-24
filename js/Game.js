@@ -80,15 +80,23 @@ function endGame() {
 function restart() {
   'use strict';
 
-  // Add player
+  // Clear the input handler
+  inputHandler.clear();
+
+  // Destroy player, enemies, and missiles
   player.destroy();
+  for (var d = 0; d < enemies.length; d++) {
+    enemies[d].destroy(false);
+  }
+  for (var i = 0; i < missilePool.missiles.length; i++) {
+    missilePool.missiles[i].destroy();
+  }
+
+  // Add player
   player = new Player(0, -40);
   scene.add(player);
 
   // Add enemies
-  for (var d = 0; d < enemies.length; d++) {
-    enemies[d].destroy(false);
-  }
   enemies = [];
   for (var i = 0; i < 5; i++) {
     for (var j = 0; j < 5; j++) {
@@ -124,21 +132,21 @@ function animate() {
   var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
 
   // If A was pressed, toggle wireframe
-  if (!gameOver && inputHandler.isPressed(65)) {
+  if (inputHandler.isPressed(65) && !gameOver) {
     toggleWireframe(scene);
   }
 
   // If S is pressed, pause the game
-  if (!gameOver && inputHandler.isPressed(83)) {
+  if (inputHandler.isPressed(83) && !gameOver) {
     gamePaused = !gamePaused;
     headsUpDisplay.togglePause();
     inputHandler.clear();
   }
 
   // If R is pressed after game over, restart the game
-  if (gameOver && inputHandler.isPressed(82)) {
-    //window.location.reload();
+  if (inputHandler.isPressed(82) && gameOver) {
     restart();
+    return;
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
