@@ -17,16 +17,11 @@ function InputHandler() {
     return isPressed;
   };
 
-  this.clear = function(){
-    for (var property in keysDown) {
-        if (keysDown.hasOwnProperty(property)) {
-            keysDown[property] = false;
-        }
-    }
+  this.clear = function () {
     for (var property in keysPressed) {
-        if (keysPressed.hasOwnProperty(property)) {
-            keysPressed[property] = false;
-        }
+      if (keysPressed.hasOwnProperty(property)) {
+        keysPressed[property] = false;
+      }
     }
   }
 

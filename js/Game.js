@@ -67,6 +67,14 @@ function render() {
 }
 
 /**
+ * Enters Game Over state
+ */
+function endGame() {
+  gameOver = true;
+  headsUpDisplay.endGame();
+}
+
+/**
  * Animates the game
  */
 function animate() {
@@ -90,6 +98,11 @@ function animate() {
     gamePaused = !gamePaused;
     headsUpDisplay.togglePause();
     inputHandler.clear();
+  }
+
+  // If R is pressed after game over, restart the game
+  if (gameOver && inputHandler.isPressed(82)) {
+    window.location.reload();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
@@ -163,9 +176,9 @@ function animate() {
  */
 
 function createTexture() {
-  loader.load('../textures/background1.jpg',
+  textureLoader.load('textures/background1.jpg',
     function (texture) {
-      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight, gameWidth / 4, gameHeight / 4);
+      var geometry = new THREE.PlaneGeometry(gameWidth, gameHeight);
       var material = new THREE.MeshBasicMaterial({
         map: texture
       });

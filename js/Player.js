@@ -110,8 +110,7 @@ Player.prototype.handleCollision = function (collisionObject) {
   this.lives--;
 
   if (this.lives === 0) {
-    gameOver = true;
-    headsUpDisplay.gameOver();
+    endGame();
   }
 };
 

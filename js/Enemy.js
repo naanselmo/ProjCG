@@ -43,6 +43,9 @@ Enemy.prototype.destroy = function () {
     }
   }
   Character.prototype.destroy.call(this);
+  if (enemies.length === 0) {
+    endGame();
+  }
 };
 
 Enemy.prototype.handleOutOfBounds = function (boundary) {
