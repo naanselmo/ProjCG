@@ -26,8 +26,8 @@ function HeadsUpDisplay() {
     this.missiles[m] = missile;
     this.missileCount++;
   }
-  textureLoader.load('textures/game_over.jpg', this.createGameOver);
-  textureLoader.load('textures/game_paused.jpg', this.createGamePaused);
+  textureLoader.load('textures/game_over.png', this.createGameOver);
+  textureLoader.load('textures/game_paused.png', this.createGamePaused);
   this.resize();
 }
 
@@ -48,7 +48,7 @@ HeadsUpDisplay.prototype.createGameOver = function (texture) {
   var material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
-    opacity: 0.8
+    opacity: 1
   });
   headsUpDisplay.gameOverOverlay = new THREE.Mesh(geometry, material);
   headsUpDisplay.gameOverOverlay.visible = false;
@@ -64,7 +64,7 @@ HeadsUpDisplay.prototype.createGamePaused = function (texture) {
   var material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
-    opacity: 0.8
+    opacity: 1
   });
   headsUpDisplay.gamePausedOverlay = new THREE.Mesh(geometry, material);
   headsUpDisplay.gamePausedOverlay.visible = false;
