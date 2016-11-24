@@ -82,7 +82,8 @@ HeadsUpDisplay.prototype.loseLife = function () {
     return;
   }
 
-  this.lives[--this.livesCount].visible = false;
+  this.livesCount--;
+  this.lives[this.livesCount].visible = false;
 };
 
 /**
@@ -91,7 +92,8 @@ HeadsUpDisplay.prototype.loseLife = function () {
 HeadsUpDisplay.prototype.gainLife = function () {
   'use strict';
 
-  this.lives[this.livesCount++].visible = true;
+  this.lives[this.livesCount].visible = true;
+  this.livesCount++;
 };
 
 /**
@@ -100,11 +102,12 @@ HeadsUpDisplay.prototype.gainLife = function () {
 HeadsUpDisplay.prototype.loseMissile = function () {
   'use strict';
 
-  if (this.missilesCount === 0) {
+  if (this.missileCount === 0) {
     return;
   }
 
-  this.missiles[--this.missileCount].visible = false;
+  this.missileCount--;
+  this.missiles[this.missileCount].visible = false;
 };
 
 /**
@@ -113,7 +116,9 @@ HeadsUpDisplay.prototype.loseMissile = function () {
 HeadsUpDisplay.prototype.gainMissile = function () {
   'use strict';
 
-  this.missiles[this.missileCount++].visible = true;
+  console.log(this.missileCount);
+  this.missiles[this.missileCount].visible = true;
+  this.missileCount++;
 };
 
 /**
@@ -132,6 +137,23 @@ HeadsUpDisplay.prototype.endGame = function () {
   'use strict';
 
   this.gameOverOverlay.visible = true;
+};
+
+/**
+ * Restarts the game
+ */
+HeadsUpDisplay.prototype.restartGame = function () {
+  'use strict';
+
+  this.gameOverOverlay.visible = false;
+
+  while (headsUpDisplay.missileCount < player.missileCharge) {
+    headsUpDisplay.gainMissile();
+  }
+
+  while (headsUpDisplay.livesCount < player.lives) {
+    headsUpDisplay.gainLife();
+  }
 };
 
 /**

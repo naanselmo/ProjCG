@@ -75,6 +75,41 @@ function endGame() {
 }
 
 /**
+ * Restarts the game
+ */
+function restart() {
+  'use strict';
+
+  // Add player
+  player.destroy();
+  player = new Player(0, -40);
+  scene.add(player);
+
+  // Add enemies
+  for (var d = 0; d < enemies.length; d++) {
+    enemies[d].destroy(false);
+  }
+  enemies = [];
+  for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+      var enemy = new Enemy(-24 + j * 12, 35 - i * 12);
+      enemy.velocity.set(Math.random() - 0.5, Math.random() - 0.5, 0).normalize().multiplyScalar(enemy.maxVelocity);
+      enemies.push(enemy);
+      scene.add(enemy);
+    }
+  }
+
+  // Create clock and begin animating
+  animate.clock = new THREE.Clock();
+
+  // Pause disabled on start, game not over yet
+  gamePaused = false;
+  gameOver = false;
+
+  headsUpDisplay.restartGame();
+}
+
+/**
  * Animates the game
  */
 function animate() {
@@ -102,7 +137,8 @@ function animate() {
 
   // If R is pressed after game over, restart the game
   if (gameOver && inputHandler.isPressed(82)) {
-    window.location.reload();
+    //window.location.reload();
+    restart();
   }
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);

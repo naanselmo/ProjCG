@@ -34,18 +34,24 @@ Enemy.lambertMaterial = new THREE.MeshLambertMaterial({
   color: 0xcc1212
 });
 
-Enemy.prototype.destroy = function () {
+Enemy.prototype.destroy = function (changeList) {
   'use strict';
 
-  for (var i = enemies.length - 1; i >= 0; i--) {
-    if (enemies[i] === this) {
-      enemies.splice(i, 1);
+  if (changeList === undefined) {
+    changeList = true;
+  }
+
+  if (changeList) {
+    for (var i = enemies.length - 1; i >= 0; i--) {
+      if (enemies[i] === this) {
+        enemies.splice(i, 1);
+      }
+    }
+    if (enemies.length === 0) {
+      endGame();
     }
   }
   Character.prototype.destroy.call(this);
-  if (enemies.length === 0) {
-    endGame();
-  }
 };
 
 Enemy.prototype.handleOutOfBounds = function (boundary) {
