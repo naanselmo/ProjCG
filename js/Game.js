@@ -89,12 +89,12 @@ function animate() {
   var objectsToIterate = [player].concat(enemies).concat(missilePool.missiles);
 
   // If A was pressed, toggle wireframe
-  if (inputHandler.isPressed(65)) {
+  if (!gameOver && inputHandler.isPressed(65)) {
     toggleWireframe(scene);
   }
 
   // If S is pressed, pause the game
-  if (inputHandler.isPressed(83)) {
+  if (!gameOver && inputHandler.isPressed(83)) {
     gamePaused = !gamePaused;
     headsUpDisplay.togglePause();
     inputHandler.clear();
@@ -107,7 +107,7 @@ function animate() {
 
   objectsToIterate = objectsToIterate.concat(missilePool.deadMissiles);
 
-  if (inputHandler.isPressed(71)) {
+  if (!gameOver && inputHandler.isPressed(71)) {
     if (materialToUse == "phongMaterial") {
       materialToUse = "lambertMaterial";
     } else if (materialToUse == "lambertMaterial") {
@@ -122,7 +122,7 @@ function animate() {
     }
   }
 
-  if (inputHandler.isPressed(76)) {
+  if (!gameOver && inputHandler.isPressed(76)) {
     if (materialToUse == "basicMaterial") {
       materialToUse = lastMaterialToUse;
     } else {
